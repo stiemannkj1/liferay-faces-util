@@ -29,6 +29,7 @@ import com.liferay.faces.util.client.ScriptsEncoderFactory;
 import com.liferay.faces.util.context.FacesRequestContext;
 import com.liferay.faces.util.context.PartialResponseWriterWrapper;
 import com.liferay.faces.util.factory.FactoryExtensionFinder;
+import java.util.Map;
 
 
 /**
@@ -87,19 +88,20 @@ public class PartialViewContextImpl extends PartialViewContextWrapper {
 		}
 
 		@Override
+		public void startExtension(Map<String, String> attributes) throws IOException {
+
+			if (!wroteEval) {
+				encodeEvalScripts();
+			}
+
+			super.startExtension(attributes);
+		}
+
+		@Override
 		public void endDocument() throws IOException {
 
 			if (!wroteEval) {
-
-				FacesRequestContext facesRequestContext = FacesRequestContext.getCurrentInstance();
-				List<Script> scripts = facesRequestContext.getScripts();
-
-				if (!scripts.isEmpty()) {
-
-					super.startEval();
-					encodeScripts(scripts);
-					super.endEval();
-				}
+				encodeEvalScripts();
 			}
 
 			super.endDocument();
@@ -116,6 +118,21 @@ public class PartialViewContextImpl extends PartialViewContextWrapper {
 			}
 
 			super.endEval();
+			wroteEval = true;
+		}
+
+		private void encodeEvalScripts() throws IOException {
+
+			FacesRequestContext facesRequestContext = FacesRequestContext.getCurrentInstance();
+			List<Script> scripts = facesRequestContext.getScripts();
+
+			if (!scripts.isEmpty()) {
+
+				super.startEval();
+				encodeScripts(scripts);
+				super.endEval();
+			}
+
 			wroteEval = true;
 		}
 
