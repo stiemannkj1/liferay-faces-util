@@ -13,6 +13,7 @@
 	<version>3.0.0-SNAPSHOT</version>
 	<name>Liferay Faces Util</name>
 	<description>Liferay Faces Utilities</description>
+	<packaging>bundle</packaging>
 
 	<organization>
 		<name>Liferay, Inc.</name>
@@ -101,22 +102,6 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.4</version>
-					<configuration>
-						<archive>
-							<manifestEntries>
-								<Built-By>Release Manager</Built-By>
-								<Implementation-Title>${project.name}</Implementation-Title>
-								<Implementation-Version>${full.version}</Implementation-Version>
-								<Implementation-Vendor-Id>com.liferay</Implementation-Vendor-Id>
-								<Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
-							</manifestEntries>
-						</archive>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
 					<version>1.4</version>
 				</plugin>
@@ -187,6 +172,57 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.5.4</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<!-- Remove the Built-By header since it cannot be overriden, and it generates according to -->
+						<!-- the following code: Built-By: $(whoami) -->
+						<_removeheaders>Built-By</_removeheaders>
+						<Implementation-Title>${project.name}</Implementation-Title>
+						<Implementation-Version>${full.version}</Implementation-Version>
+						<Implementation-Vendor-Id>com.liferay</Implementation-Vendor-Id>
+						<Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
+						<!-- org.apache.log4j is also an optional package, but it is automatically identified as -->
+						<!-- optional. -->
+						<!-- javax.el is automatically imported like so: javax.el;version="[2.2.0,3.0.0)". Since it -->
+						<!-- excludes version 3.0.0, it is incorrect. Instead we import it with version="2.2.0" -->
+						<!-- since that allows for any version 2.2.0 or greater. -->
+						<!-- TODO research why com.liferay.faces.util.* must be excluded. Packages internal to the -->
+						<!-- jar should not be imported as far as I can tell. -->
+						<Import-Package>
+							!com.liferay.faces.util.*,
+							javax.el;version="2.2.0",
+							com.caucho.server.resin;resolution:=optional,
+							com.icesoft.faces.application;resolution:=optional,
+							com.liferay.faces.alloy.component.column;resolution:=optional,
+							com.liferay.faces.bridge;resolution:=optional,
+							com.liferay.faces.metal.component.inputtext;resolution:=optional,
+							com.liferay.faces.portal.context;resolution:=optional,
+							com.liferay.faces.showcase.dto;resolution:=optional,
+							com.liferay.portal.kernel.util;resolution:=optional,
+							com.sun.faces;resolution:=optional,
+							com.sun.faces.renderkit.html_basic;resolution:=optional,
+							com.sun.faces.util;resolution:=optional,
+							org.apache.log4j;resolution:=optional,
+							org.apache.myfaces.shared.renderkit.html.util;resolution:=optional,
+							org.apache.myfaces.util;resolution:=optional,
+							org.apache.pluto.container;resolution:=optional,
+							org.apache.webbeans.util;resolution:=optional,
+							org.icefaces.application;resolution:=optional,
+							org.jboss.weld.util;resolution:=optional,
+							org.primefaces.util;resolution:=optional,
+							org.richfaces.util;resolution:=optional,
+							org.richfaces;resolution:=optional,
+							org.springframework.core;resolution:=optional,
+							*
+						</Import-Package>
+					</instructions>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
