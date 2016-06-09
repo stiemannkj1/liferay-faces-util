@@ -16,19 +16,21 @@
 package com.liferay.faces.util.product.internal;
 
 /**
- * @author  Neil Griffin
+ * @author  Kyle Stiemann
  */
-public class ProductLiferayFacesUtilImpl extends ProductBaseImpl {
+public class ProductButterFacesImpl extends ProductBaseImpl {
 
-	public ProductLiferayFacesUtilImpl() {
+	public ProductButterFacesImpl() {
 
 		try {
+			this.title = "ButterFaces";
 
-			this.title = "Liferay Faces Util";
-			init(this.getClass(), "Liferay Faces Util");
+			// Note: The ButterFaces version cannot be obtained.
+			Class<?> clazz = Class.forName("de.larmic.butterfaces.component.partrenderer.Constants");
+			init(clazz, "ButterFaces");
 		}
 		catch (Exception e) {
-			// Ignore
+			// Ignore -- ButterFaces is likely not present.
 		}
 	}
 }

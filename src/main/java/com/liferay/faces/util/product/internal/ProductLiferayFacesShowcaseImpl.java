@@ -15,9 +15,6 @@
  */
 package com.liferay.faces.util.product.internal;
 
-import com.liferay.faces.util.product.ProductConstants;
-
-
 /**
  * @author  Neil Griffin
  */
@@ -26,10 +23,10 @@ public class ProductLiferayFacesShowcaseImpl extends ProductBaseImpl {
 	public ProductLiferayFacesShowcaseImpl() {
 
 		try {
-			this.title = ProductConstants.LIFERAY_FACES_SHOWCASE;
+			this.title = "Liferay Faces Showcase";
 
 			Class<?> clazz = Class.forName("com.liferay.faces.showcase.dto.ShowcaseComponent");
-			init(clazz, ProductConstants.LIFERAY_FACES_SHOWCASE);
+			init(clazz, "Liferay Faces Showcase");
 		}
 		catch (Exception e) {
 			// Ignore -- Liferay Faces Showcase is likely not present.

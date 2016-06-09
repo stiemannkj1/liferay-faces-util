@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.liferay.faces.util.product.internal;
+package com.liferay.faces.util.product;
 
 /**
- * @author  Neil Griffin
+ * @author  Kyle Stiemann
  */
-public class ProductLiferayFacesUtilImpl extends ProductBaseImpl {
+public enum ProductId {
 
-	public ProductLiferayFacesUtilImpl() {
-
-		try {
-
-			this.title = "Liferay Faces Util";
-			init(this.getClass(), "Liferay Faces Util");
-		}
-		catch (Exception e) {
-			// Ignore
-		}
-	}
+	ANGULARBEANS, ANGULARFACES, BOOTSFACES, BUTTERFACES, CDI, DELTASPIKE, ICEFACES, JSF, LIFERAY_PORTAL,
+	LIFERAY_FACES_ALLOY, LIFERAY_FACES_BRIDGE, LIFERAY_FACES_METAL, LIFERAY_FACES_PORTAL, LIFERAY_FACES_SHOWCASE,
+	LIFERAY_FACES_UTIL, MOJARRA, MYFACES, OMNIFACES, OPEN_WEB_BEANS, PRIMEFACES, PRIMEFACES_EXTENSIONS, PLUTO, RESIN,
+	RICHFACES, SPRING_FRAMEWORK, WELD, WILDFLY
 }

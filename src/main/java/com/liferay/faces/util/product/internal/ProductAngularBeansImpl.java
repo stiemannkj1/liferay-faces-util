@@ -16,19 +16,21 @@
 package com.liferay.faces.util.product.internal;
 
 /**
- * @author  Neil Griffin
+ * @author  Kyle Stiemann
  */
-public class ProductLiferayFacesUtilImpl extends ProductBaseImpl {
+public class ProductAngularBeansImpl extends ProductBaseImpl {
 
-	public ProductLiferayFacesUtilImpl() {
+	public ProductAngularBeansImpl() {
 
 		try {
+			this.title = "AngularBeans";
 
-			this.title = "Liferay Faces Util";
-			init(this.getClass(), "Liferay Faces Util");
+			// Note: The AngularBeans version cannot be obtained.
+			Class<?> clazz = Class.forName("angularBeans.api.NGApp");
+			init(clazz, "AngularBeans");
 		}
 		catch (Exception e) {
-			// Ignore
+			// Ignore -- AngularBeans is likely not present.
 		}
 	}
 }

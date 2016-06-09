@@ -18,8 +18,6 @@ package com.liferay.faces.util.product.internal;
 import java.io.InputStream;
 import java.util.Properties;
 
-import com.liferay.faces.util.product.ProductConstants;
-
 
 /**
  * @author  Neil Griffin
@@ -30,11 +28,12 @@ public class ProductPrimeFacesImpl extends ProductBaseImpl {
 
 		try {
 
+			this.title = "PrimeFaces";
+
 			Class<?> constantsClass = Class.forName("org.primefaces.util.Constants");
 			String version = (String) constantsClass.getDeclaredField("VERSION").get(String.class);
 			initVersionInfo(version);
 			this.buildId = (this.majorVersion * 100) + (this.minorVersion * 10) + this.revisionVersion;
-			this.title = ProductConstants.PRIMEFACES;
 
 			if (this.majorVersion > 0) {
 				this.detected = true;
@@ -56,7 +55,6 @@ public class ProductPrimeFacesImpl extends ProductBaseImpl {
 					version = pomProperties.getProperty("version");
 					initVersionInfo(version);
 					this.buildId = (this.majorVersion * 100) + (this.minorVersion * 10) + this.revisionVersion;
-					this.title = ProductConstants.PRIMEFACES;
 
 					if (this.majorVersion > 0) {
 						this.detected = true;

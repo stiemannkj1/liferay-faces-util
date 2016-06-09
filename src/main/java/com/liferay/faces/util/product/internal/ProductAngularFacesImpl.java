@@ -16,19 +16,21 @@
 package com.liferay.faces.util.product.internal;
 
 /**
- * @author  Neil Griffin
+ * @author  Kyle Stiemann
  */
-public class ProductLiferayFacesUtilImpl extends ProductBaseImpl {
+public class ProductAngularFacesImpl extends ProductBaseImpl {
 
-	public ProductLiferayFacesUtilImpl() {
+	public ProductAngularFacesImpl() {
 
 		try {
+			this.title = "AngularFaces";
 
-			this.title = "Liferay Faces Util";
-			init(this.getClass(), "Liferay Faces Util");
+			// Note: The AngularFaces version cannot be obtained.
+			Class<?> clazz = Class.forName("de.beyondjava.angularFaces.core.ELTools");
+			init(clazz, "AngularFaces");
 		}
 		catch (Exception e) {
-			// Ignore
+			// Ignore -- AngularFaces is likely not present.
 		}
 	}
 }

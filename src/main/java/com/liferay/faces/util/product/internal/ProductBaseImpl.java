@@ -15,6 +15,8 @@
  */
 package com.liferay.faces.util.product.internal;
 
+import com.liferay.faces.util.logging.Logger;
+import com.liferay.faces.util.logging.LoggerFactory;
 import com.liferay.faces.util.product.Product;
 
 
@@ -22,6 +24,9 @@ import com.liferay.faces.util.product.Product;
  * @author  Neil Griffin
  */
 public class ProductBaseImpl implements Product {
+
+	// Logger
+	private static final Logger logger = LoggerFactory.getLogger(ProductBaseImpl.class);
 
 	// Private Constants
 	private static final String REGEX_VERSION_DELIMITER = "[.[-]_]";
@@ -57,6 +62,11 @@ public class ProductBaseImpl implements Product {
 	}
 
 	public String getVersion() {
+
+		if (version == null) {
+			version = getMajorVersion() + "." + getMinorVersion() + "." + getRevisionVersion();
+		}
+
 		return version;
 	}
 
@@ -91,6 +101,8 @@ public class ProductBaseImpl implements Product {
 
 	protected void init(Class<?> clazz, String expectedTitle) {
 
+		detected = true;
+
 		Package pkg = clazz.getPackage();
 
 		if ((pkg != null) && (pkg.getImplementationVersion() != null)) {
@@ -108,8 +120,8 @@ public class ProductBaseImpl implements Product {
 			initVersionInfo(packageManifest.getImplementationVersion());
 		}
 
-		if (this.majorVersion > 0) {
-			detected = true;
+		if ((this.majorVersion == 0) && (this.minorVersion == 0) && (this.revisionVersion == 0)) {
+			logger.warn("Unable to obtain version information for {0}.", this.title);
 		}
 	}
 
