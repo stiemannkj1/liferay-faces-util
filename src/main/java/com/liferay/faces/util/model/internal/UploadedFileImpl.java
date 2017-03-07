@@ -164,7 +164,7 @@ public class UploadedFileImpl implements Serializable, UploadedFile {
 		return status;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String toString() {
 		return this.absolutePath;
 	}

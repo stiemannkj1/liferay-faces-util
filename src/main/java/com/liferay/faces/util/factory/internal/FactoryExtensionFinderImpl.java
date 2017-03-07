@@ -37,7 +37,7 @@ public class FactoryExtensionFinderImpl extends FactoryExtensionFinder {
 	// Private Data Members
 	private Map<Class<?>, Object> factoryExtensionCache = new HashMap<Class<?>, Object>();
 
-	@Override
+	// Java 1.6+ @Override
 	public Object getFactoryInstance(Class<?> clazz) {
 		Object factory = null;
 
@@ -48,7 +48,7 @@ public class FactoryExtensionFinderImpl extends FactoryExtensionFinder {
 		return factory;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	@SuppressWarnings("unchecked")
 	public void registerFactory(ConfiguredElement configuredFactoryExtension) {
 

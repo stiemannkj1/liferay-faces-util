@@ -32,12 +32,12 @@ public class FacesContextHelperFactoryImpl extends FacesContextHelperFactory imp
 	// Private Data Members
 	private FacesContextHelper facesContextHelper = new FacesContextHelperImpl();
 
-	@Override
+	// Java 1.6+ @Override
 	public FacesContextHelper getFacesContextHelper() {
 		return facesContextHelper;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public FacesContextHelperFactory getWrapped() {
 
 		// Since this is the default factory instance, it will never wrap another factory.

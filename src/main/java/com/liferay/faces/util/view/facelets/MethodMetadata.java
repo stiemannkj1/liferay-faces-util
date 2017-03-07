@@ -42,7 +42,7 @@ public class MethodMetadata extends Metadata {
 		this.args = args;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void applyMetadata(FaceletContext faceletContext, Object instance) {
 		MethodExpression methodExpression = tagAttribute.getMethodExpression(faceletContext, null, args);
 

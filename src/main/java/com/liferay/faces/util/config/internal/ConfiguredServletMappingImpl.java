@@ -94,7 +94,7 @@ public class ConfiguredServletMappingImpl implements ConfiguredServletMapping {
 		return extensionMapped;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isImplicit() {
 		return implicit;
 	}
@@ -132,7 +132,7 @@ public class ConfiguredServletMappingImpl implements ConfiguredServletMapping {
 		return pathMapped;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String toString() {
 		return "extension=" + extension + " extensionMapped=" + extensionMapped + " path=" + path + " pathMapped=" +
 			pathMapped + " servletName=" + servletName + " urlPattern=" + urlPattern;

@@ -113,7 +113,7 @@ public class ProductFactoryImpl extends ProductFactory {
 		PRODUCTS = Collections.unmodifiableMap(productMap);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Product getProductImplementation(Product.Name productId) {
 		return PRODUCTS.get(productId);
 	}

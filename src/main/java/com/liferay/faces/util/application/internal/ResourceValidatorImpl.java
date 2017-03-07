@@ -79,7 +79,7 @@ public class ResourceValidatorImpl implements ResourceValidator, Serializable {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean containsBannedPath(String resourceId) {
 
 		Matcher matcher = BANNED_PATHS_PATTERN.matcher(resourceId);
@@ -93,7 +93,7 @@ public class ResourceValidatorImpl implements ResourceValidator, Serializable {
 		return matches;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isBannedSequence(String resourceId) {
 		boolean bannedSequence = false;
 
@@ -114,7 +114,7 @@ public class ResourceValidatorImpl implements ResourceValidator, Serializable {
 		return bannedSequence;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isFaceletDocument(FacesContext facesContext, String resourceId) {
 
 		boolean faceletDocument = false;
@@ -196,7 +196,7 @@ public class ResourceValidatorImpl implements ResourceValidator, Serializable {
 		return faceletDocument;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isSelfReferencing(FacesContext facesContext, String resourceId) {
 		return false;
 	}

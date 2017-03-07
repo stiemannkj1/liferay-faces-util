@@ -46,7 +46,7 @@ public class ProductMojarraImpl extends ProductBaseImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String toString() {
 
 		if (toStringValue == null) {

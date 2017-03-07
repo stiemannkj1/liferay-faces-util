@@ -45,24 +45,24 @@ public class I18nImpl implements I18n, Serializable {
 	private transient Map<Locale, ResourceBundle> facesResourceBundleCache =
 		new ConcurrentHashMap<Locale, ResourceBundle>();
 
-	@Override
+	// Java 1.6+ @Override
 	public FacesMessage getFacesMessage(FacesContext facesContext, Locale locale, FacesMessage.Severity severity,
 		String messageId) {
 		return I18nUtil.getFacesMessage(this, facesContext, locale, severity, messageId);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public FacesMessage getFacesMessage(FacesContext facesContext, Locale locale, FacesMessage.Severity severity,
 		String messageId, Object... arguments) {
 		return I18nUtil.getFacesMessage(this, facesContext, locale, severity, messageId, arguments);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getMessage(FacesContext facesContext, Locale locale, String messageId) {
 		return getMessage(facesContext, locale, messageId, new Object[] {});
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getMessage(FacesContext facesContext, Locale locale, String messageId, Object... arguments) {
 
 		String message = null;

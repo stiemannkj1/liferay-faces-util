@@ -51,17 +51,17 @@ public class UtilELResolver extends ELResolverBase {
 	private I18nMap i18nMap = new I18nMap();
 	private ProductMap productMap = new ProductMap();
 
-	@Override
+	// Java 1.6+ @Override
 	public Class<?> getCommonPropertyType(ELContext elContext, Object base) {
 		return null;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isReadOnly(ELContext elContext, Object base, Object property) {
 		return true;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void setValue(ELContext elContext, Object base, Object property, Object value) {
 
 		if (elContext == null) {
@@ -82,12 +82,12 @@ public class UtilELResolver extends ELResolverBase {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	protected Object resolveProperty(ELContext elContext, Object base, String property) {
 		return null;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	protected Object resolveVariable(ELContext elContext, String varName) {
 
 		Object value = null;

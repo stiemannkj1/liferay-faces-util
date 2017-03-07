@@ -35,7 +35,7 @@ public class ConfiguredServletImpl implements ConfiguredServlet {
 		this.multiPartConfig = multiPartConfig;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public MultiPartConfig getMultiPartConfig() {
 		return multiPartConfig;
 	}

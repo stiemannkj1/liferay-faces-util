@@ -29,17 +29,17 @@ public class ScriptFactoryImpl extends ScriptFactory implements Serializable {
 	// serialVersionUID
 	private static final long serialVersionUID = 8070502062615438592L;
 
-	@Override
+	// Java 1.6+ @Override
 	public Script getScript(String sourceCode) {
 		return new ScriptImpl(sourceCode);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Script getScript(String sourceCode, String[] modules, Script.ModulesType modulesType) {
 		return new ScriptImpl(sourceCode, modules, modulesType);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public ScriptFactory getWrapped() {
 
 		// Since this is the default factory instance, it will never wrap another factory.

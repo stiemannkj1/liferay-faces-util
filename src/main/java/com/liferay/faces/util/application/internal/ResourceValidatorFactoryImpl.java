@@ -86,12 +86,12 @@ public class ResourceValidatorFactoryImpl extends ResourceValidatorFactory imple
 		resourceValidator = new ResourceValidatorImpl(excludeResourcePatterns, excludeLibraryPatterns);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public ResourceValidator getResourceValidator() {
 		return resourceValidator;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public ResourceValidatorFactory getWrapped() {
 
 		// Since this is the default factory instance, it will never wrap another factory.

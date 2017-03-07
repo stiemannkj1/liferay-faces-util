@@ -57,7 +57,7 @@ public class LoggerFactoryImpl extends LoggerFactory {
 		LOG4J_AVAILABLE = log4jAvailable;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Logger getLoggerImplementation(String name) {
 
 		if (LOG4J_AVAILABLE) {

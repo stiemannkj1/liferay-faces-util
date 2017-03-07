@@ -111,12 +111,12 @@ public enum WebConfigParam implements ConfigParam<ExternalContext> {
 		return alternateName;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean getBooleanValue(ExternalContext externalContext) {
 		return WebConfigParamUtil.getBooleanValue(externalContext, name, alternateName, defaultBooleanValue);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getConfiguredValue(ExternalContext externalContext) {
 		return WebConfigParamUtil.getConfiguredValue(externalContext, name, alternateName);
 	}
@@ -129,7 +129,7 @@ public enum WebConfigParam implements ConfigParam<ExternalContext> {
 		return defaultIntegerValue;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public long getDefaultLongValue() {
 		return defaultLongValue;
 	}
@@ -138,12 +138,12 @@ public enum WebConfigParam implements ConfigParam<ExternalContext> {
 		return defaultStringValue;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public int getIntegerValue(ExternalContext externalContext) {
 		return WebConfigParamUtil.getIntegerValue(externalContext, name, alternateName, defaultIntegerValue);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public long getLongValue(ExternalContext externalContext) {
 		return WebConfigParamUtil.getLongValue(externalContext, name, alternateName, defaultLongValue);
 	}
@@ -152,12 +152,12 @@ public enum WebConfigParam implements ConfigParam<ExternalContext> {
 		return name;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getStringValue(ExternalContext externalContext) {
 		return WebConfigParamUtil.getStringValue(externalContext, name, alternateName, defaultStringValue);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isConfigured(ExternalContext externalContext) {
 		return WebConfigParamUtil.isSpecified(externalContext, name, alternateName);
 	}

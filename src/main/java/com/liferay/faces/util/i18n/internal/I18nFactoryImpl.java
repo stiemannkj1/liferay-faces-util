@@ -32,12 +32,12 @@ public class I18nFactoryImpl extends I18nFactory implements Serializable {
 	// Private Data Members
 	private I18n i18n = new I18nImpl();
 
-	@Override
+	// Java 1.6+ @Override
 	public I18n getI18n() {
 		return i18n;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public I18nFactory getWrapped() {
 
 		// Since this is the default factory instance, it will never wrap another factory.

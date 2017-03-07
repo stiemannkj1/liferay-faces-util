@@ -82,7 +82,7 @@ public class FacesConfigParserImpl extends SAXHandlerBase implements FacesConfig
 		this.saxParser = saxParser;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void endElement(String uri, String localName, String elementName) throws SAXException {
 
 		if (parsingApplicationExtension) {
@@ -223,7 +223,7 @@ public class FacesConfigParserImpl extends SAXHandlerBase implements FacesConfig
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void startElement(String uri, String localName, String elementName, Attributes attributes)
 		throws SAXException {
 

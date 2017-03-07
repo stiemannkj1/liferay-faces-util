@@ -28,7 +28,7 @@ public class PropertyMapEntrySet<V> extends HashSet<Map.Entry<String, V>> {
 	// serialVersionUID
 	private static final long serialVersionUID = 6500855053442038977L;
 
-	@Override
+	// Java 1.6+ @Override
 	public Iterator<Map.Entry<String, V>> iterator() {
 		return new IteratorWrapper(super.iterator());
 	}

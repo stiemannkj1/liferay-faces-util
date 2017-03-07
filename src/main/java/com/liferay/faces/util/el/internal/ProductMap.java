@@ -32,27 +32,27 @@ public class ProductMap implements Map<Product.Name, Product>, Serializable {
 	// serialVersionUID
 	private static final long serialVersionUID = 8051373438471283130L;
 
-	@Override
+	// Java 1.6+ @Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean containsKey(Object key) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean containsValue(Object value) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Set<Entry<Product.Name, Product>> entrySet() {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Product get(Object key) {
 
 		Product.Name productName = null;
@@ -67,37 +67,37 @@ public class ProductMap implements Map<Product.Name, Product>, Serializable {
 		return ProductFactory.getProduct(productName);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isEmpty() {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Set<Product.Name> keySet() {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Product put(Product.Name key, Product value) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void putAll(Map<? extends Product.Name, ? extends Product> m) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Product remove(Object key) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public int size() {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Collection<Product> values() {
 		throw new UnsupportedOperationException();
 	}

@@ -65,7 +65,7 @@ public class ComponentStateHelper implements StateHelper {
 		stateMap.put(propertyKey, value);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void restoreState(FacesContext facesContext, Object state) {
 
 		if (state != null) {
@@ -79,7 +79,7 @@ public class ComponentStateHelper implements StateHelper {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Object saveState(FacesContext facesContext) {
 
 		Set<Map.Entry<Serializable, Object>> entrySet = stateMap.entrySet();

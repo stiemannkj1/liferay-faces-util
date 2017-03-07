@@ -34,7 +34,7 @@ public class FacesURLEncoderImpl implements FacesURLEncoder, Serializable {
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(FacesURLEncoderImpl.class);
 
-	@Override
+	// Java 1.6+ @Override
 	public String encode(String url, String encoding) {
 
 		String encodedURL = url;

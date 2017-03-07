@@ -35,7 +35,7 @@ public class UTF8Control extends ResourceBundle.Control {
 	/**
 	 * See {@link ResourceBundle.Control#newBundle(String, Locale, String, ClassLoader, boolean)}.
 	 */
-	@Override
+	// Java 1.6+ @Override
 	public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader classLoader,
 		boolean reload) throws IllegalAccessException, InstantiationException, IOException {
 

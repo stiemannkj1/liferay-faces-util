@@ -32,38 +32,38 @@ public abstract class RendererWrapper extends Renderer implements Wrapper<Render
 
 	public abstract Renderer getWrapped();
 
-	@Override
+	// Java 1.6+ @Override
 	public String convertClientId(FacesContext context, String clientId) {
 		return getWrapped().convertClientId(context, clientId);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void decode(FacesContext context, UIComponent component) {
 		getWrapped().decode(context, component);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
 		getWrapped().encodeBegin(context, component);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void encodeChildren(FacesContext context, UIComponent component) throws IOException {
 		getWrapped().encodeChildren(context, component);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
 		getWrapped().encodeEnd(context, component);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Object getConvertedValue(FacesContext context, UIComponent component, Object submittedValue)
 		throws ConverterException {
 		return getWrapped().getConvertedValue(context, component, submittedValue);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean getRendersChildren() {
 		return getWrapped().getRendersChildren();
 	}

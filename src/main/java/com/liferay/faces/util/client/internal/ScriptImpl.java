@@ -53,17 +53,17 @@ public class ScriptImpl implements Script, Serializable {
 		this.modulesType = modulesType;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String[] getModules() {
 		return modules;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public ModulesType getModulesType() {
 		return modulesType;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getSourceCode() {
 		return sourceCode;
 	}

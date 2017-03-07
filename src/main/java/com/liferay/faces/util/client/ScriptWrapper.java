@@ -37,7 +37,7 @@ public abstract class ScriptWrapper implements Script, Wrapper<Script> {
 	/**
 	 * @see  {@link Script#getModulesType()}
 	 */
-	@Override
+	// Java 1.6+ @Override
 	public ModulesType getModulesType() {
 		return getWrapped().getModulesType();
 	}

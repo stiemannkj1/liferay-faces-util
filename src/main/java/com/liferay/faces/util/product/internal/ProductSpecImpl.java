@@ -48,42 +48,42 @@ public class ProductSpecImpl implements Product {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public int getBuildId() {
 		return wrappedProduct.getBuildId();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public int getMajorVersion() {
 		return wrappedProduct.getMajorVersion();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public int getMinorVersion() {
 		return wrappedProduct.getMinorVersion();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public int getPatchVersion() {
 		return wrappedProduct.getPatchVersion();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getTitle() {
 		return specTitle;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getVersion() {
 		return wrappedProduct.getVersion();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isDetected() {
 		return wrappedProduct.isDetected();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String toString() {
 		return wrappedProduct.toString();
 	}

@@ -69,7 +69,7 @@ public class ProductBaseImpl implements Product {
 		return detected;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String toString() {
 
 		if (stringValue == null) {

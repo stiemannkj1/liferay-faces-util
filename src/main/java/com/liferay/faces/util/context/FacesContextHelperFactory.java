@@ -44,6 +44,6 @@ public abstract class FacesContextHelperFactory implements Wrapper<FacesContextH
 	/**
 	 * Returns the wrapped factory instance if this factory decorates another. Otherwise, this method returns null.
 	 */
-	@Override
+	// Java 1.6+ @Override
 	public abstract FacesContextHelperFactory getWrapped();
 }

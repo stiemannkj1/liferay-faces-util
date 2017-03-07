@@ -45,17 +45,17 @@ public class ApplicationFactoryImpl extends ApplicationFactory implements Wrappe
 		applicationStartupListener.processSystemEvent(systemEvent);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Application getApplication() {
 		return wrappedFactory.getApplication();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public ApplicationFactory getWrapped() {
 		return wrappedFactory;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void setApplication(Application application) {
 		wrappedFactory.setApplication(application);
 	}

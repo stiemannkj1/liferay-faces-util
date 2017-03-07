@@ -32,12 +32,12 @@ public class MultiPartConfigImpl implements MultiPartConfig {
 		this.maxFileSize = maxFileSize;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getLocation() {
 		return location;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public long getMaxFileSize() {
 		return maxFileSize;
 	}

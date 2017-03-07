@@ -28,13 +28,13 @@ import com.liferay.faces.util.helper.Wrapper;
  */
 public abstract class I18nWrapper implements I18n, Wrapper<I18n> {
 
-	@Override
+	// Java 1.6+ @Override
 	public abstract I18n getWrapped();
 
 	/**
 	 * See {@link I18n#getFacesMessage(FacesContext, Locale, FacesMessage.Severity, String)}
 	 */
-	@Override
+	// Java 1.6+ @Override
 	public FacesMessage getFacesMessage(FacesContext facesContext, Locale locale, FacesMessage.Severity severity,
 		String messageId) {
 		return getWrapped().getFacesMessage(facesContext, locale, severity, messageId);
@@ -43,7 +43,7 @@ public abstract class I18nWrapper implements I18n, Wrapper<I18n> {
 	/**
 	 * See {@link I18n#getFacesMessage(FacesContext, Locale, FacesMessage.Severity, String, Object...)}
 	 */
-	@Override
+	// Java 1.6+ @Override
 	public FacesMessage getFacesMessage(FacesContext facesContext, Locale locale, FacesMessage.Severity severity,
 		String messageId, Object... arguments) {
 		return getWrapped().getFacesMessage(facesContext, locale, severity, messageId, arguments);
@@ -52,7 +52,7 @@ public abstract class I18nWrapper implements I18n, Wrapper<I18n> {
 	/**
 	 * See {@link I18n#getMessage(FacesContext, Locale, String)}
 	 */
-	@Override
+	// Java 1.6+ @Override
 	public String getMessage(FacesContext facesContext, Locale locale, String messageId) {
 		return getWrapped().getMessage(facesContext, locale, messageId);
 	}
@@ -60,7 +60,7 @@ public abstract class I18nWrapper implements I18n, Wrapper<I18n> {
 	/**
 	 * See {@link I18n#getMessage(FacesContext, Locale, String, Object...)}
 	 */
-	@Override
+	// Java 1.6+ @Override
 	public String getMessage(FacesContext facesContext, Locale locale, String messageId, Object... arguments) {
 		return getWrapped().getMessage(facesContext, locale, messageId, arguments);
 	}

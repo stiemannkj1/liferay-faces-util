@@ -36,7 +36,7 @@ public class UploadedFileFactoryImpl extends UploadedFileFactory implements Seri
 	// serialVersionUID
 	private static final long serialVersionUID = 1276552178390469143L;
 
-	@Override
+	// Java 1.6+ @Override
 	public UploadedFile getUploadedFile(Exception e) {
 
 		UploadedFile uploadedFile = null;
@@ -75,7 +75,7 @@ public class UploadedFileFactoryImpl extends UploadedFileFactory implements Seri
 		return uploadedFile;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public UploadedFile getUploadedFile(String absolutePath, Map<String, Object> attributes, String charSet,
 		String contentType, Map<String, List<String>> headers, String id, String message, String name, long size,
 		UploadedFile.Status status) {

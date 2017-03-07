@@ -63,7 +63,7 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void debug(String message) {
 
 		if (isDebugEnabled()) {
@@ -77,7 +77,7 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void debug(String message, Object... arguments) {
 
 		if (isDebugEnabled()) {
@@ -93,7 +93,7 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void error(Throwable throwable) {
 
 		if (isErrorEnabled()) {
@@ -108,7 +108,7 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void error(String message) {
 
 		if (isErrorEnabled()) {
@@ -122,7 +122,7 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void error(String message, Object... arguments) {
 
 		if (isErrorEnabled()) {
@@ -138,7 +138,7 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void info(String message) {
 
 		if (isInfoEnabled()) {
@@ -152,7 +152,7 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void info(String message, Object... arguments) {
 
 		if (isInfoEnabled()) {
@@ -168,32 +168,32 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isDebugEnabled() {
 		return wrappedLogger.isDebugEnabled();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isErrorEnabled() {
 		return wrappedLogger.isEnabledFor(Level.ERROR);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isInfoEnabled() {
 		return wrappedLogger.isInfoEnabled();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isTraceEnabled() {
 		return wrappedLogger.isTraceEnabled();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isWarnEnabled() {
 		return wrappedLogger.isEnabledFor(Level.WARN);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void trace(String message) {
 
 		if (isTraceSupported()) {
@@ -215,7 +215,7 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void trace(String message, Object... arguments) {
 
 		if (isTraceSupported()) {
@@ -239,7 +239,7 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void warn(String message) {
 
 		if (isWarnEnabled()) {
@@ -253,7 +253,7 @@ public class LoggerLog4JImpl extends LoggerDefaultImpl {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void warn(String message, Object... arguments) {
 
 		if (isWarnEnabled()) {

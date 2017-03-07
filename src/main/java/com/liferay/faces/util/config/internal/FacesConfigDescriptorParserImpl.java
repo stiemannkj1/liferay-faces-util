@@ -74,7 +74,7 @@ public class FacesConfigDescriptorParserImpl extends SAXHandlerBase implements F
 		this.beforeNames = new ArrayList<String>();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void endElement(String uri, String localName, String elementName) throws SAXException {
 
 		if (parsingFacesConfig) {
@@ -215,7 +215,7 @@ public class FacesConfigDescriptorParserImpl extends SAXHandlerBase implements F
 		return isWebInfFacesConfig;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public FacesConfigDescriptor parse(InputStream inputStream, String path) throws IOException {
 
 		try {
@@ -302,7 +302,7 @@ public class FacesConfigDescriptorParserImpl extends SAXHandlerBase implements F
 		return parse(inputStream, path);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void startElement(String uri, String localName, String elementName, Attributes attributes)
 		throws SAXException {
 

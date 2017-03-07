@@ -41,27 +41,27 @@ public class I18nMap extends I18nMapCompat {
 	// Private Data Members
 	private transient Map<String, String> cache = new ConcurrentHashMap<String, String>();
 
-	@Override
+	// Java 1.6+ @Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean containsKey(Object key) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean containsValue(Object value) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Set<Entry<String, Object>> entrySet() {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Object get(Object key) {
 
 		String message = null;
@@ -107,27 +107,27 @@ public class I18nMap extends I18nMapCompat {
 		return message;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isEmpty() {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Set<String> keySet() {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Object put(String key, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void putAll(Map<? extends String, ?> m) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Object remove(Object key) {
 		throw new UnsupportedOperationException();
 	}
@@ -242,12 +242,12 @@ public class I18nMap extends I18nMapCompat {
 		return i18n.getMessage(facesContext, locale, messageId, arg1, arg2, arg3, arg4);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public int size() {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Collection<Object> values() {
 		throw new UnsupportedOperationException();
 	}

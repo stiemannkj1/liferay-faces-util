@@ -39,7 +39,7 @@ import com.liferay.faces.util.factory.FactoryExtensionFinder;
  */
 public class ApplicationStartupListener extends ApplicationStartupListenerCompat_2_2 {
 
-	@Override
+	// Java 1.6+ @Override
 	public void processSystemEvent(EventObject systemEvent) throws AbortProcessingException {
 
 		UtilDependencyVerifier.verify();

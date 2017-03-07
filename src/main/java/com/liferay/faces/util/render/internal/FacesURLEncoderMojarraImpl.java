@@ -42,7 +42,7 @@ public class FacesURLEncoderMojarraImpl implements FacesURLEncoder, Serializable
 		this.MOJARRA_METHOD_WRITE_URL = mojarraMethodWriteURL;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String encode(String url, String encoding) {
 
 		String encodedURL = url;

@@ -25,35 +25,35 @@ import com.liferay.faces.util.helper.Wrapper;
  */
 public abstract class ResourceValidatorWrapper implements ResourceValidator, Wrapper<ResourceValidator> {
 
-	@Override
+	// Java 1.6+ @Override
 	public abstract ResourceValidator getWrapped();
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean containsBannedPath(String resourceId) {
 		return getWrapped().containsBannedPath(resourceId);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isBannedSequence(String resourceId) {
 		return getWrapped().isBannedSequence(resourceId);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isFaceletDocument(FacesContext facesContext, String resourceId) {
 		return getWrapped().isFaceletDocument(facesContext, resourceId);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isSelfReferencing(FacesContext facesContext, String resourceId) {
 		return getWrapped().isSelfReferencing(facesContext, resourceId);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isValidLibraryName(String libraryName) {
 		return getWrapped().isValidLibraryName(libraryName);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isValidResourceName(String resourceName) {
 		return getWrapped().isValidResourceName(resourceName);
 	}

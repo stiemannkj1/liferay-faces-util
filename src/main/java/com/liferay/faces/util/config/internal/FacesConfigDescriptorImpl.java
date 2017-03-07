@@ -56,12 +56,12 @@ public class FacesConfigDescriptorImpl implements FacesConfigDescriptor, Seriali
 		this.url = url;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public List<String> getAbsoluteOrdering() {
 		return absoluteOrdering;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getName() {
 
 		if (name == null) {
@@ -71,17 +71,17 @@ public class FacesConfigDescriptorImpl implements FacesConfigDescriptor, Seriali
 		return name;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Ordering getOrdering() {
 		return ordering;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getURL() {
 		return url;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isWebInfFacesConfig() {
 		return isWebInfFacesConfig;
 	}

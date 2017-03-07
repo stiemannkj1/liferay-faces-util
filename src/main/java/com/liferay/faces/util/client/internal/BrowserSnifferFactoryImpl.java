@@ -32,7 +32,7 @@ public class BrowserSnifferFactoryImpl extends BrowserSnifferFactory implements 
 	// serialVersionUID
 	private static final long serialVersionUID = 2480449562969899228L;
 
-	@Override
+	// Java 1.6+ @Override
 	public BrowserSniffer getBrowserSniffer(ExternalContext externalContext) {
 
 		HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
@@ -40,7 +40,7 @@ public class BrowserSnifferFactoryImpl extends BrowserSnifferFactory implements 
 		return new BrowserSnifferImpl(httpServletRequest);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public BrowserSnifferFactory getWrapped() {
 
 		// Since this is the default factory instance, it will never wrap another factory.

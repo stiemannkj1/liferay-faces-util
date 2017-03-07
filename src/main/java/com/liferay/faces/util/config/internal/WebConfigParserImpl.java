@@ -79,7 +79,7 @@ public class WebConfigParserImpl extends SAXHandlerBase implements WebConfigPars
 		this.saxParser = saxParser;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 
 		if (parsingServlet) {
@@ -166,7 +166,7 @@ public class WebConfigParserImpl extends SAXHandlerBase implements WebConfigPars
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void startElement(String uri, String localName, String elementName, Attributes attributes)
 		throws SAXException {
 

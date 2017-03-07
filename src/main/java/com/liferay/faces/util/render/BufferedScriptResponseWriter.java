@@ -43,7 +43,7 @@ public class BufferedScriptResponseWriter extends ResponseWriter {
 		this.stringWriter = new StringWriter();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public ResponseWriter cloneWithWriter(Writer writer) {
 
 		logger.debug(
@@ -53,30 +53,30 @@ public class BufferedScriptResponseWriter extends ResponseWriter {
 		return null;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void close() throws IOException {
 		stringWriter.close();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void endDocument() throws IOException {
 		logger.debug(
 			"Suppressing the output of endDocument() since BufferedScriptResponseWriter only supports writing scripts.");
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void endElement(String name) throws IOException {
 		logger.debug(
 			"Suppressing the output of endElement({0}, {1}) since BufferedScriptResponseWriter only supports writing scripts.",
 			name);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void flush() throws IOException {
 		stringWriter.flush();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getCharacterEncoding() {
 
 		logger.debug(
@@ -85,7 +85,7 @@ public class BufferedScriptResponseWriter extends ResponseWriter {
 		return null;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getContentType() {
 
 		logger.debug(
@@ -94,37 +94,37 @@ public class BufferedScriptResponseWriter extends ResponseWriter {
 		return null;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void startDocument() throws IOException {
 		logger.debug(
 			"Suppressing the output of startDocument() since BufferedScriptResponseWriter only supports writing scripts.");
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void startElement(String name, UIComponent component) throws IOException {
 		logger.debug(
 			"Suppressing the output of startElement({0}, {1}) since BufferedScriptResponseWriter only supports writing scripts.",
 			name, component);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String toString() {
 		return stringWriter.toString();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void write(char[] text, int off, int len) throws IOException {
 		stringWriter.write(text, off, len);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void writeAttribute(String name, Object value, String property) throws IOException {
 		logger.debug(
 			"Suppressing the output of writeAttribute({0}, {1}, {2}) since BufferedScriptResponseWriter only supports writing scripts.",
 			name, value, property);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void writeComment(Object comment) throws IOException {
 
 		if (comment != null) {
@@ -135,7 +135,7 @@ public class BufferedScriptResponseWriter extends ResponseWriter {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void writeText(Object text, String property) throws IOException {
 
 		// JavaScript does not need to be escaped. See
@@ -146,7 +146,7 @@ public class BufferedScriptResponseWriter extends ResponseWriter {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void writeText(char[] text, int off, int len) throws IOException {
 
 		// JavaScript does not need to be escaped. See
@@ -157,7 +157,7 @@ public class BufferedScriptResponseWriter extends ResponseWriter {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void writeURIAttribute(String name, Object value, String property) throws IOException {
 		logger.debug(
 			"Suppressing the output of writeURIAttribute({0}, {1}, {2}) since BufferedScriptResponseWriter only supports writing scripts.",

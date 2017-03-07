@@ -25,7 +25,7 @@ public abstract class FacesURLEncoderWrapper implements FacesURLEncoder, Wrapper
 
 	public abstract FacesURLEncoder getWrapped();
 
-	@Override
+	// Java 1.6+ @Override
 	public String encode(String url, String encoding) {
 		return getWrapped().encode(url, encoding);
 	}

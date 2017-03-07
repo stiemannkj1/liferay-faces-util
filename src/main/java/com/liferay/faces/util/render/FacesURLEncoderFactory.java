@@ -48,6 +48,6 @@ public abstract class FacesURLEncoderFactory implements Wrapper<FacesURLEncoderF
 	/**
 	 * Returns the wrapped factory instance if this factory decorates another. Otherwise, this method returns null.
 	 */
-	@Override
+	// Java 1.6+ @Override
 	public abstract FacesURLEncoderFactory getWrapped();
 }

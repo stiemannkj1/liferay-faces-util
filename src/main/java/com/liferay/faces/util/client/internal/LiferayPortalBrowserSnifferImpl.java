@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Nate Cavanaugh
  */
 public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSnifferCompat implements LiferayPortalBrowserSniffer {
-	@Override
+	// Java 1.6+ @Override
 	public boolean acceptsGzip(HttpServletRequest request) {
 		String acceptEncoding = request.getHeader("Accept-Encoding");
 
@@ -40,7 +40,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getBrowserId(HttpServletRequest request) {
 		if (isIe(request)) {
 			return BROWSER_ID_IE;
@@ -53,12 +53,12 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public float getMajorVersion(HttpServletRequest request) {
 		return GetterUtil.getFloat(getVersion(request));
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getRevision(HttpServletRequest request) {
 		String revision = (String)request.getAttribute(
 			WebKeys.BROWSER_SNIFFER_REVISION);
@@ -75,7 +75,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return revision;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getVersion(HttpServletRequest request) {
 		String version = (String)request.getAttribute(
 			WebKeys.BROWSER_SNIFFER_VERSION);
@@ -88,7 +88,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 
 		version = parseVersion(userAgent, versionLeadings, versionSeparators);
 
-		if (version.isEmpty()) {
+		if ("".equals(version)) {
 			version = parseVersion(
 				userAgent, revisionLeadings, revisionSeparators);
 		}
@@ -98,7 +98,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return version;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isAir(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -109,7 +109,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isAndroid(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -120,7 +120,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isChrome(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -131,7 +131,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isFirefox(HttpServletRequest request) {
 		if (!isMozilla(request)) {
 			return false;
@@ -148,7 +148,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isGecko(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -159,12 +159,12 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isIe(HttpServletRequest request) {
 		return isIe(getUserAgent(request));
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isIeOnWin32(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -177,7 +177,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isIeOnWin64(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -190,7 +190,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isIphone(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -201,7 +201,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isLinux(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -212,7 +212,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isMac(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -223,7 +223,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isMobile(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -236,7 +236,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isMozilla(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -250,7 +250,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isOpera(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -261,7 +261,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isRtf(HttpServletRequest request) {
 		if (isAndroid(request)) {
 			return true;
@@ -302,7 +302,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isSafari(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -313,7 +313,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isSun(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -324,7 +324,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isWebKit(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 
@@ -337,7 +337,7 @@ public class LiferayPortalBrowserSnifferImpl extends LiferayPortalBrowserSniffer
 		return false;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isWindows(HttpServletRequest request) {
 		String userAgent = getUserAgent(request);
 

@@ -73,12 +73,12 @@ public class FacesURLEncoderFactoryImpl extends FacesURLEncoderFactory implement
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public FacesURLEncoder getFacesURLEncoder() {
 		return facesURLEncoder;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public FacesURLEncoderFactory getWrapped() {
 
 		// Since this is the factory instance provided by the bridge, it will never wrap another factory.

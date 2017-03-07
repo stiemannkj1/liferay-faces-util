@@ -52,7 +52,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
 		return attemptsToAccessServiceFile > 0;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public URL findResource(String name) {
 
 		if (name.contains("META-INF/services")) {
@@ -68,7 +68,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Enumeration<URL> findResources(String name) throws IOException {
 
 		if (name.contains("META-INF/services")) {
@@ -84,7 +84,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public URL getResource(String name) {
 
 		if (name.contains("META-INF/services")) {
@@ -100,7 +100,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public InputStream getResourceAsStream(String name) {
 
 		if (name.contains("META-INF/services")) {
@@ -116,7 +116,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Enumeration<URL> getResources(String name) throws IOException {
 
 		if (name.contains("META-INF/services")) {

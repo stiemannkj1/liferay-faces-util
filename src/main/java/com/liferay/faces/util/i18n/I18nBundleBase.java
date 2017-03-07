@@ -57,19 +57,19 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 
 	public abstract String getBundleKey();
 
-	@Override
+	// Java 1.6+ @Override
 	public FacesMessage getFacesMessage(FacesContext facesContext, Locale locale, FacesMessage.Severity severity,
 		String messageId) {
 		return I18nUtil.getFacesMessage(this, facesContext, locale, severity, messageId);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public FacesMessage getFacesMessage(FacesContext facesContext, Locale locale, FacesMessage.Severity severity,
 		String messageId, Object... arguments) {
 		return I18nUtil.getFacesMessage(this, facesContext, locale, severity, messageId, arguments);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getMessage(FacesContext facesContext, Locale locale, String messageId) {
 
 		String message = null;
@@ -124,7 +124,7 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 		return message;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String getMessage(FacesContext facesContext, Locale locale, String messageId, Object... arguments) {
 
 		String message = getMessage(facesContext, locale, messageId);
@@ -136,7 +136,7 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 		return message;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public I18n getWrapped() {
 		return wrappedI18n;
 	}

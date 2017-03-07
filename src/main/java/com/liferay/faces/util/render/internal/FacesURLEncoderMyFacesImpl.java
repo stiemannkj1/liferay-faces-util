@@ -41,7 +41,7 @@ public class FacesURLEncoderMyFacesImpl implements FacesURLEncoder, Serializable
 		this.MYFACES_METHOD_ENCODE_URI_ATTRIBUTE = myFacesMethodEncodeURIAtribute;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public String encode(String url, String encoding) {
 		String encodedURL = url;
 

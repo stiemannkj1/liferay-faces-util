@@ -56,12 +56,12 @@ public abstract class ELResolverBase extends ELResolver implements Serializable 
 		FEATURE_DESCRIPTORS.add(featureDescriptor);
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext elContext, Object base) {
 		return FEATURE_DESCRIPTORS.iterator();
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Class<?> getType(ELContext elContext, Object base, Object property) {
 
 		if (elContext == null) {
@@ -73,7 +73,7 @@ public abstract class ELResolverBase extends ELResolver implements Serializable 
 		return String.class;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public Object getValue(ELContext elContext, Object base, Object property) {
 
 		if (elContext == null) {
@@ -108,12 +108,12 @@ public abstract class ELResolverBase extends ELResolver implements Serializable 
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public boolean isReadOnly(ELContext elContext, Object base, Object property) {
 		return true;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void setValue(ELContext elContext, Object base, Object property, Object value) {
 
 		if (elContext == null) {

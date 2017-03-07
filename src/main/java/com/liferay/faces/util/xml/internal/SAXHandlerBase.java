@@ -47,7 +47,7 @@ public abstract class SAXHandlerBase extends DefaultHandler {
 		this.resolveEntities = resolveEntities;
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
 
 		if ((content != null) && (ch != null) && (length > 0)) {
@@ -55,7 +55,7 @@ public abstract class SAXHandlerBase extends DefaultHandler {
 		}
 	}
 
-	@Override
+	// Java 1.6+ @Override
 	public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
 
 		InputSource inputSource = new InputSource(new StringReader(""));

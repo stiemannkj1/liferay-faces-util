@@ -45,6 +45,6 @@ public interface Product {
 
 	boolean isDetected();
 
-	@Override
+	// Java 1.6+ @Override
 	String toString();
 }

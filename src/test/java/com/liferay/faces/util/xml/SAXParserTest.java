@@ -97,7 +97,7 @@ public class SAXParserTest {
 		private int totalSpanText;
 		private int totalStartElements;
 
-		@Override
+		// Java 1.6+ @Override
 		public void characters(char[] chars, int start, int length) throws SAXException {
 			String text = new String(chars, start, length);
 
@@ -130,7 +130,7 @@ public class SAXParserTest {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
+		// Java 1.6+ @Override
 		public void endDocument() throws SAXException {
 			logger.debug("endDocument");
 		}
@@ -139,7 +139,7 @@ public class SAXParserTest {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
+		// Java 1.6+ @Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			testURI(uri, localName);
 			totalEndElements++;
@@ -154,7 +154,7 @@ public class SAXParserTest {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
+		// Java 1.6+ @Override
 		public void startDocument() throws SAXException {
 			logger.debug("startDocument");
 		}
@@ -163,7 +163,7 @@ public class SAXParserTest {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
+		// Java 1.6+ @Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
 			throws SAXException {
 
