@@ -21,6 +21,7 @@
 		<render-kit-factory>com.liferay.faces.util.render.internal.RenderKitFactoryUtilImpl</render-kit-factory>
 		<factory-extension>
 			<util:browser-sniffer-factory>com.liferay.faces.util.client.internal.BrowserSnifferFactoryImpl</util:browser-sniffer-factory>
+			<util:cache-factory>com.liferay.faces.util.cache.CacheFactoryImpl</util:cache-factory>
 			<util:faces-context-helper-factory>com.liferay.faces.util.context.internal.FacesContextHelperFactoryImpl</util:faces-context-helper-factory>
 			<util:faces-request-context-factory>com.liferay.faces.util.context.internal.FacesRequestContextFactoryImpl</util:faces-request-context-factory>
 			<util:faces-url-encoder-factory>com.liferay.faces.util.render.internal.FacesURLEncoderFactoryImpl</util:faces-url-encoder-factory>

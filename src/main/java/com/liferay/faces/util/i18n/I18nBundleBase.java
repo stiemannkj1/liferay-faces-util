@@ -17,17 +17,17 @@ package com.liferay.faces.util.i18n;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import com.liferay.faces.util.cache.Cache;
+import com.liferay.faces.util.cache.CacheFactory;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
 
@@ -61,8 +61,18 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 		if (startupFacesContext != null) {
 			ExternalContext externalContext = startupFacesContext.getExternalContext();
 			Map<String, Object> applicationMap = externalContext.getApplicationMap();
-			Map<Locale, ResourceBundle> cache = new ConcurrentHashMap<Locale, ResourceBundle>();
-			applicationMap.put(getClass().getName(), cache);
+			Integer maxCacheSize = getMaxCacheSize(externalContext);
+			Cache<Locale, ResourceBundle> messageCache;
+
+			if (maxCacheSize != null) {
+				messageCache = CacheFactory.<Locale, ResourceBundle>getConcurrentCacheInstance(externalContext,
+						maxCacheSize);
+			}
+			else {
+				messageCache = CacheFactory.<Locale, ResourceBundle>getConcurrentCacheInstance(externalContext);
+			}
+
+			applicationMap.put(getClass().getName(), messageCache);
 		}
 		else {
 			logger.error("Unable to store the resource bundle cache in the application map");
@@ -95,7 +105,7 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 
 		ExternalContext externalContext = facesContext.getExternalContext();
 		Map<String, Object> applicationMap = externalContext.getApplicationMap();
-		Map<String, String> messageCache = (Map<String, String>) applicationMap.get(getClass().getName());
+		Cache<String, String> messageCache = (Cache<String, String>) applicationMap.get(getClass().getName());
 
 		if ((messageCache != null) && messageCache.containsKey(key)) {
 
@@ -128,23 +138,23 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 			if (resourceBundle != null) {
 
 				try {
+
 					message = resourceBundle.getString(messageId);
 
 					if (messageCache != null) {
-						messageCache.put(key, message);
+						message = messageCache.putIfAbsent(key, message);
 					}
 				}
 				catch (MissingResourceException e) {
 
 					if (messageCache != null) {
-						messageCache.put(key, "");
+						message = messageCache.putIfAbsent(key, "");
 					}
 				}
 			}
 		}
 
 		if (message == null) {
-
 			message = super.getMessage(facesContext, locale, messageId);
 		}
 
@@ -166,5 +176,16 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 	@Override
 	public I18n getWrapped() {
 		return wrappedI18n;
+	}
+
+	/**
+	 * Returns the max cache size of the {@link I18nBundleBase} or null if the cache should not have a maximum size.
+	 * This method is called from the constructor of I18nBundleBase, so this method must not cause side effects and
+	 * cannot rely on I18nBundleBase being fully initialized. The default return value is null;
+	 *
+	 * @param  externalContext  The external context associated with the current faces context.
+	 */
+	protected Integer getMaxCacheSize(ExternalContext externalContext) {
+		return null;
 	}
 }
