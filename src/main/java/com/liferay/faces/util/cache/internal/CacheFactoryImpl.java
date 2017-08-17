@@ -104,4 +104,13 @@ public class CacheFactoryImpl extends CacheFactory {
 				". maxCacheSize must be greater than 0.");
 		}
 	}
+
+	@Override
+	public int getDefaultInitialCapacity() {
+
+		// For more details, see: https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html#HashMap--
+		return 16;
+	}
+
+	
 }

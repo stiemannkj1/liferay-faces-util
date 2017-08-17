@@ -56,9 +56,8 @@ public class I18nImpl implements I18n, Serializable {
 		if (startupFacesContext != null) {
 			ExternalContext externalContext = startupFacesContext.getExternalContext();
 			Map<String, Object> applicationMap = externalContext.getApplicationMap();
-			Cache<Locale, ResourceBundle> facesResourceBundleCache = CacheFactory
-				.<Locale, ResourceBundle>getConcurrentCacheInstance(externalContext,
-					I18n.class.getName() + ".maxCacheSize");
+			Cache<Locale, ResourceBundle> facesResourceBundleCache = CacheFactory.getConcurrentCacheInstance(
+					externalContext, I18n.class.getName() + ".maxCacheSize");
 			applicationMap.put(I18nImpl.class.getName(), facesResourceBundleCache);
 		}
 		else {
@@ -151,7 +150,7 @@ public class I18nImpl implements I18n, Serializable {
 			facesResourceBundle = ResourceBundle.getBundle(messageBundle, locale, classLoader, new UTF8Control());
 
 			if (facesResourceBundleCache != null) {
-				facesResourceBundle = facesResourceBundleCache.putIfAbsent(locale, facesResourceBundle);
+				facesResourceBundle = facesResourceBundleCache.put(locale, facesResourceBundle);
 			}
 		}
 

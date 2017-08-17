@@ -24,9 +24,13 @@ import javax.faces.application.Application;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.SystemEvent;
+import javax.faces.event.SystemEventListener;
 
 import com.liferay.faces.util.cache.Cache;
 import com.liferay.faces.util.cache.CacheFactory;
+import com.liferay.faces.util.config.ApplicationConfig;
 import com.liferay.faces.util.i18n.I18n;
 import com.liferay.faces.util.i18n.I18nFactory;
 import com.liferay.faces.util.logging.Logger;
@@ -36,31 +40,13 @@ import com.liferay.faces.util.logging.LoggerFactory;
 /**
  * @author  Neil Griffin
  */
-public class I18nMap extends I18nMapCompat {
+public class I18nMap extends I18nMapCompat implements SystemEventListener {
 
 	// serialVersionUID
 	private static final long serialVersionUID = 5549598732411060854L;
 
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(I18nMap.class);
-
-	public I18nMap() {
-
-		// This class is instantiated by the UtilELResolver class during application startup.
-		FacesContext startupFacesContext = FacesContext.getCurrentInstance();
-
-		// Store the i18n message cache in the application map (as a Servlet Context attribute).
-		if (startupFacesContext != null) {
-			ExternalContext externalContext = startupFacesContext.getExternalContext();
-			Map<String, Object> applicationMap = externalContext.getApplicationMap();
-			Cache<String, String> facesResourceBundleCache = CacheFactory.<String, String>getConcurrentCacheInstance(
-					externalContext, "com.liferay.faces.util.el.i18n.maxCacheSize");
-			applicationMap.put(I18nMap.class.getName(), facesResourceBundleCache);
-		}
-		else {
-			logger.error("Unable to store the i18n message cache in the application map");
-		}
-	}
 
 	@Override
 	public void clear() {
@@ -124,7 +110,7 @@ public class I18nMap extends I18nMapCompat {
 					message = i18n.getMessage(facesContext, locale, keyAsString);
 
 					if ((message != null) && (messageCache != null)) {
-						message = messageCache.putIfAbsent(messageKey, message);
+						message = messageCache.put(messageKey, message);
 					}
 				}
 			}
@@ -142,8 +128,32 @@ public class I18nMap extends I18nMapCompat {
 	}
 
 	@Override
+	public boolean isListenerForSource(Object source) {
+		return (source instanceof ApplicationConfig);
+	}
+
+	@Override
 	public Set<String> keySet() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void processEvent(SystemEvent systemEvent) throws AbortProcessingException {
+
+		FacesContext startupFacesContext = FacesContext.getCurrentInstance();
+
+		// Store the i18n message cache in the application map (as a Servlet Context attribute).
+		if (startupFacesContext != null) {
+
+			ExternalContext externalContext = startupFacesContext.getExternalContext();
+			Map<String, Object> applicationMap = externalContext.getApplicationMap();
+			Cache<String, String> facesResourceBundleCache = CacheFactory.<String, String>getConcurrentCacheInstance(
+					externalContext, "com.liferay.faces.util.el.i18n.maxCacheSize");
+			applicationMap.put(I18nMap.class.getName(), facesResourceBundleCache);
+		}
+		else {
+			logger.error("Unable to store the i18n message cache in the application map");
+		}
 	}
 
 	@Override
