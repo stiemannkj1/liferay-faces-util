@@ -15,8 +15,6 @@
  */
 package com.liferay.faces.util.cache.internal;
 
-import javax.faces.context.ExternalContext;
-
 import com.liferay.faces.util.cache.Cache;
 import com.liferay.faces.util.cache.CacheFactory;
 
@@ -32,24 +30,20 @@ public class CacheFactoryImpl extends CacheFactory {
 	}
 
 	@Override
-	public <K, V> Cache<K, V> getCache(int maxCacheSize) {
+	public <K, V> Cache<K, V> getCache(int initialCapacity) {
 
-		validateMaxCacheSize(maxCacheSize);
+		validateInitialCapacity(initialCapacity);
 
-		return new CacheMaxSizeImpl<K, V>(maxCacheSize);
+		return new CacheImpl<K, V>(initialCapacity);
 	}
 
 	@Override
-	public <K, V> Cache<K, V> getCache(ExternalContext externalContext, String maxCacheSizeInitParamName) {
+	public <K, V> Cache<K, V> getCache(int initialCapacity, int maxCapacity) {
 
-		Integer maxCacheSize = getMaxCacheSize(externalContext, maxCacheSizeInitParamName);
+		validateInitialCapacity(initialCapacity);
+		validateMaxCapacity(maxCapacity);
 
-		if (maxCacheSize != null) {
-			return getCache(maxCacheSize);
-		}
-		else {
-			return getCache();
-		}
+		return new CacheMaxCapacityLRUImpl<K, V>(initialCapacity, maxCapacity);
 	}
 
 	@Override
@@ -58,51 +52,20 @@ public class CacheFactoryImpl extends CacheFactory {
 	}
 
 	@Override
-	public <K, V> Cache<K, V> getConcurrentCache(int maxCacheSize) {
+	public <K, V> Cache<K, V> getConcurrentCache(int initialCapacity) {
 
-		validateMaxCacheSize(maxCacheSize);
+		validateInitialCapacity(initialCapacity);
 
-		return new ConcurrentCacheMaxSizeImpl<K, V>(maxCacheSize);
+		return new ConcurrentCacheImpl<K, V>(initialCapacity);
 	}
 
 	@Override
-	public <K, V> Cache<K, V> getConcurrentCache(ExternalContext externalContext, String maxCacheSizeInitParamName) {
+	public <K, V> Cache<K, V> getConcurrentCache(int initialCapacity, int maxCapacity) {
 
-		Integer maxCacheSize = getMaxCacheSize(externalContext, maxCacheSizeInitParamName);
+		validateInitialCapacity(initialCapacity);
+		validateMaxCapacity(maxCapacity);
 
-		if (maxCacheSize != null) {
-			return getConcurrentCache(maxCacheSize);
-		}
-		else {
-			return getConcurrentCache();
-		}
-	}
-
-	@Override
-	public CacheFactory getWrapped() {
-
-		// Since this is the default factory instance, it will never wrap another factory.
-		return null;
-	}
-
-	private Integer getMaxCacheSize(ExternalContext externalContext, String maxCacheSizeInitParamName) {
-
-		Integer maxCacheSize = null;
-		String maxCacheSizeString = externalContext.getInitParameter(maxCacheSizeInitParamName);
-
-		if (maxCacheSizeString != null) {
-			maxCacheSize = Integer.parseInt(maxCacheSizeString);
-		}
-
-		return maxCacheSize;
-	}
-
-	private void validateMaxCacheSize(int maxCacheSize) {
-
-		if (maxCacheSize < 1) {
-			throw new IllegalArgumentException("Invalid maxCacheSize of " + maxCacheSize +
-				". maxCacheSize must be greater than 0.");
-		}
+		return new ConcurrentCacheMaxCapacityLRUImpl<K, V>(initialCapacity, maxCapacity);
 	}
 
 	@Override
@@ -112,5 +75,26 @@ public class CacheFactoryImpl extends CacheFactory {
 		return 16;
 	}
 
-	
+	@Override
+	public CacheFactory getWrapped() {
+
+		// Since this is the default factory instance, it will never wrap another factory.
+		return null;
+	}
+
+	private void validateInitialCapacity(int initialCapacity) {
+
+		if (initialCapacity < 0) {
+			throw new IllegalArgumentException("Invalid initialCapacity of " + initialCapacity +
+				". initialCapacity must be greater than -1.");
+		}
+	}
+
+	private void validateMaxCapacity(int maxCapacity) {
+
+		if (maxCapacity < 1) {
+			throw new IllegalArgumentException("Invalid maxCapacity of " + maxCapacity +
+				". maxCapacity must be greater than 0.");
+		}
+	}
 }

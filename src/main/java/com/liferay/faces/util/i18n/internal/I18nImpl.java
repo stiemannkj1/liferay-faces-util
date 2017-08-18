@@ -29,6 +29,7 @@ import javax.faces.context.FacesContext;
 
 import com.liferay.faces.util.cache.Cache;
 import com.liferay.faces.util.cache.CacheFactory;
+import com.liferay.faces.util.factory.FactoryExtensionFinder;
 import com.liferay.faces.util.i18n.I18n;
 import com.liferay.faces.util.i18n.I18nUtil;
 import com.liferay.faces.util.i18n.UTF8Control;
@@ -54,10 +55,25 @@ public class I18nImpl implements I18n, Serializable {
 
 		// Store the resource bundle cache in the application map (as a Servlet Context attribute).
 		if (startupFacesContext != null) {
+
 			ExternalContext externalContext = startupFacesContext.getExternalContext();
 			Map<String, Object> applicationMap = externalContext.getApplicationMap();
-			Cache<Locale, ResourceBundle> facesResourceBundleCache = CacheFactory.getConcurrentCacheInstance(
-					externalContext, I18n.class.getName() + ".maxCacheSize");
+			Cache<Locale, ResourceBundle> facesResourceBundleCache;
+
+			String maxCacheCapacityString = externalContext.getInitParameter(I18n.class.getName() + ".maxCacheSize");
+
+			if (maxCacheCapacityString != null) {
+
+				CacheFactory cacheFactory = (CacheFactory) FactoryExtensionFinder.getFactory(externalContext,
+						CacheFactory.class);
+				int initialCacheCapacity = cacheFactory.getDefaultInitialCapacity();
+				int maxCacheCapacity = Integer.parseInt(maxCacheCapacityString);
+				facesResourceBundleCache = cacheFactory.getConcurrentCache(initialCacheCapacity, maxCacheCapacity);
+			}
+			else {
+				facesResourceBundleCache = CacheFactory.getConcurrentCacheInstance(externalContext);
+			}
+
 			applicationMap.put(I18nImpl.class.getName(), facesResourceBundleCache);
 		}
 		else {

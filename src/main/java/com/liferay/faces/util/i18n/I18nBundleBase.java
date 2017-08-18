@@ -28,6 +28,7 @@ import javax.faces.context.FacesContext;
 
 import com.liferay.faces.util.cache.Cache;
 import com.liferay.faces.util.cache.CacheFactory;
+import com.liferay.faces.util.factory.FactoryExtensionFinder;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
 
@@ -61,15 +62,18 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 		if (startupFacesContext != null) {
 			ExternalContext externalContext = startupFacesContext.getExternalContext();
 			Map<String, Object> applicationMap = externalContext.getApplicationMap();
-			Integer maxCacheSize = getMaxCacheSize(externalContext);
-			Cache<Locale, ResourceBundle> messageCache;
+			Integer maxCacheCapacity = getMaxCacheCapacity(externalContext);
+			Cache<String, String> messageCache;
 
-			if (maxCacheSize != null) {
-				messageCache = CacheFactory.<Locale, ResourceBundle>getConcurrentCacheInstance(externalContext,
-						maxCacheSize);
+			if (maxCacheCapacity != null) {
+
+				CacheFactory cacheFactory = (CacheFactory) FactoryExtensionFinder.getFactory(externalContext,
+						CacheFactory.class);
+				int initialCacheCapacity = cacheFactory.getDefaultInitialCapacity();
+				messageCache = cacheFactory.getConcurrentCache(initialCacheCapacity, maxCacheCapacity);
 			}
 			else {
-				messageCache = CacheFactory.<Locale, ResourceBundle>getConcurrentCacheInstance(externalContext);
+				messageCache = CacheFactory.getConcurrentCacheInstance(externalContext);
 			}
 
 			applicationMap.put(getClass().getName(), messageCache);
@@ -185,7 +189,7 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 	 *
 	 * @param  externalContext  The external context associated with the current faces context.
 	 */
-	protected Integer getMaxCacheSize(ExternalContext externalContext) {
+	protected Integer getMaxCacheCapacity(ExternalContext externalContext) {
 		return null;
 	}
 }

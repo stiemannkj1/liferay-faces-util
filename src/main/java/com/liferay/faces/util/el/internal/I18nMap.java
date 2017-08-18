@@ -31,6 +31,7 @@ import javax.faces.event.SystemEventListener;
 import com.liferay.faces.util.cache.Cache;
 import com.liferay.faces.util.cache.CacheFactory;
 import com.liferay.faces.util.config.ApplicationConfig;
+import com.liferay.faces.util.factory.FactoryExtensionFinder;
 import com.liferay.faces.util.i18n.I18n;
 import com.liferay.faces.util.i18n.I18nFactory;
 import com.liferay.faces.util.logging.Logger;
@@ -147,9 +148,24 @@ public class I18nMap extends I18nMapCompat implements SystemEventListener {
 
 			ExternalContext externalContext = startupFacesContext.getExternalContext();
 			Map<String, Object> applicationMap = externalContext.getApplicationMap();
-			Cache<String, String> facesResourceBundleCache = CacheFactory.<String, String>getConcurrentCacheInstance(
-					externalContext, "com.liferay.faces.util.el.i18n.maxCacheSize");
-			applicationMap.put(I18nMap.class.getName(), facesResourceBundleCache);
+			Cache<String, String> messageCache;
+
+			String maxCacheCapacityString = externalContext.getInitParameter(
+					"com.liferay.faces.util.el.i18n.maxCacheCapacity");
+
+			if (maxCacheCapacityString != null) {
+
+				CacheFactory cacheFactory = (CacheFactory) FactoryExtensionFinder.getFactory(externalContext,
+						CacheFactory.class);
+				int initialCacheCapacity = cacheFactory.getDefaultInitialCapacity();
+				int maxCacheCapacity = Integer.parseInt(maxCacheCapacityString);
+				messageCache = cacheFactory.getConcurrentCache(initialCacheCapacity, maxCacheCapacity);
+			}
+			else {
+				messageCache = CacheFactory.getConcurrentCacheInstance(externalContext);
+			}
+
+			applicationMap.put(I18nMap.class.getName(), messageCache);
 		}
 		else {
 			logger.error("Unable to store the i18n message cache in the application map");

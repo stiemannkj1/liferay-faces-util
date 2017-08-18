@@ -36,61 +36,14 @@ public class CacheTest {
 	private static final Logger logger = LoggerFactory.getLogger(CacheTest.class);
 
 	@Test
-	public void runCacheTest() {
+	public void runCacheMaxCapacityLRUTest() throws Exception {
 
 		CacheFactoryImpl cacheFactoryImpl = new CacheFactoryImpl();
-		Cache<String, String> cache = cacheFactoryImpl.<String, String>getCache();
-		testCache(cache, 1000);
-	}
-
-	@Test
-	public void runConcurrentCacheTest() throws Exception {
-
-		CacheFactoryImpl cacheFactoryImpl = new CacheFactoryImpl();
-		Cache<String, String> cache1 = cacheFactoryImpl.<String, String>getConcurrentCache();
+		int defaultInitialCacheCapacity = cacheFactoryImpl.getDefaultInitialCapacity();
+		Cache<String, String> cache1 = cacheFactoryImpl.getCache(defaultInitialCacheCapacity, 1000);
 		testCache(cache1, 1000);
 
-		final Cache<String, String> cache2 = cacheFactoryImpl.<String, String>getConcurrentCache();
-		final Queue<AssertionError> testFailures = new ConcurrentLinkedQueue<AssertionError>();
-		final Queue<Throwable> testErrors = new ConcurrentLinkedQueue<Throwable>();
-
-		for (int i = 0; i < 100; i++) {
-			new TestConcurrentCacheThread(cache2, testFailures, testErrors, "key" + (i % 25), "value" + i).start();
-		}
-
-		errorOrFailTestIfNecessary(testErrors, testFailures);
-	}
-
-	@Test
-	public void runConcurrentMaxCacheSizeCacheTest() throws Exception {
-
-		CacheFactoryImpl cacheFactoryImpl = new CacheFactoryImpl();
-		Cache<String, String> cache1 = cacheFactoryImpl.<String, String>getConcurrentCache(1000);
-		testCache(cache1, 1000);
-
-		final Cache<String, String> cache2 = cacheFactoryImpl.<String, String>getConcurrentCache(10);
-		final Queue<AssertionError> testFailures = new ConcurrentLinkedQueue<AssertionError>();
-		final Queue<Throwable> testErrors = new ConcurrentLinkedQueue<Throwable>();
-
-		for (int i = 0; i < 100; i++) {
-			new TestConcurrentCacheThread(cache2, testFailures, testErrors, "key" + (i % 25), "value" + i).start();
-		}
-
-		errorOrFailTestIfNecessary(testErrors, testFailures);
-
-		final Cache<String, String> cache3 = cacheFactoryImpl.<String, String>getConcurrentCache(10);
-		testConcurrentMaxCacheSizeCache(cache3, 10, testFailures, testErrors);
-		errorOrFailTestIfNecessary(testErrors, testFailures);
-	}
-
-	@Test
-	public void runMaxSizeCacheTest() throws Exception {
-
-		CacheFactoryImpl cacheFactoryImpl = new CacheFactoryImpl();
-		Cache<String, String> cache1 = cacheFactoryImpl.<String, String>getCache(1000);
-		testCache(cache1, 1000);
-
-		Cache<String, String> cache2 = cacheFactoryImpl.<String, String>getConcurrentCache(10);
+		Cache<String, String> cache2 = cacheFactoryImpl.getConcurrentCache(defaultInitialCacheCapacity, 10);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -107,10 +60,10 @@ public class CacheTest {
 			Assert.assertEquals(value, cachedString);
 		}
 
-		int maxCacheSize = 10;
-		Cache<String, String> cache3 = cacheFactoryImpl.<String, String>getCache(maxCacheSize);
+		int maxCacheCapacity = 10;
+		Cache<String, String> cache3 = cacheFactoryImpl.getCache(defaultInitialCacheCapacity, maxCacheCapacity);
 
-		for (int i = 0; i < maxCacheSize; i++) {
+		for (int i = 0; i < maxCacheCapacity; i++) {
 			cache3.putIfAbsent("key" + i, "value" + i);
 		}
 
@@ -118,8 +71,57 @@ public class CacheTest {
 		Assert.assertNotNull(cache3.get("key0"));
 		cache3.putIfAbsent("key1", "value1");
 		cache3.put("key2", "value2");
-		cache3.put("key" + maxCacheSize, "value" + maxCacheSize);
+		cache3.put("key" + maxCacheCapacity, "value" + maxCacheCapacity);
 		Assert.assertNull(cache3.get("key3"));
+	}
+
+	@Test
+	public void runCacheTest() {
+
+		CacheFactoryImpl cacheFactoryImpl = new CacheFactoryImpl();
+		Cache<String, String> cache = cacheFactoryImpl.getCache();
+		testCache(cache, 1000);
+	}
+
+	@Test
+	public void runConcurrentCacheMaxCapacityLRUTest() throws Exception {
+
+		CacheFactoryImpl cacheFactoryImpl = new CacheFactoryImpl();
+		int defaultInitialCacheCapacity = cacheFactoryImpl.getDefaultInitialCapacity();
+		Cache<String, String> cache1 = cacheFactoryImpl.getConcurrentCache(defaultInitialCacheCapacity, 1000);
+		testCache(cache1, 1000);
+
+		final Cache<String, String> cache2 = cacheFactoryImpl.getConcurrentCache(defaultInitialCacheCapacity, 10);
+		final Queue<AssertionError> testFailures = new ConcurrentLinkedQueue<AssertionError>();
+		final Queue<Throwable> testErrors = new ConcurrentLinkedQueue<Throwable>();
+
+		for (int i = 0; i < 100; i++) {
+			new TestConcurrentCacheThread(cache2, testFailures, testErrors, "key" + (i % 25), "value" + i).start();
+		}
+
+		errorOrFailTestIfNecessary(testErrors, testFailures);
+
+		final Cache<String, String> cache3 = cacheFactoryImpl.getConcurrentCache(defaultInitialCacheCapacity, 10);
+		testConcurrentMaxCacheCapacityCache(cache3, 10, testFailures, testErrors);
+		errorOrFailTestIfNecessary(testErrors, testFailures);
+	}
+
+	@Test
+	public void runConcurrentCacheTest() throws Exception {
+
+		CacheFactoryImpl cacheFactoryImpl = new CacheFactoryImpl();
+		Cache<String, String> cache1 = cacheFactoryImpl.getConcurrentCache();
+		testCache(cache1, 1000);
+
+		final Cache<String, String> cache2 = cacheFactoryImpl.getConcurrentCache();
+		final Queue<AssertionError> testFailures = new ConcurrentLinkedQueue<AssertionError>();
+		final Queue<Throwable> testErrors = new ConcurrentLinkedQueue<Throwable>();
+
+		for (int i = 0; i < 100; i++) {
+			new TestConcurrentCacheThread(cache2, testFailures, testErrors, "key" + (i % 25), "value" + i).start();
+		}
+
+		errorOrFailTestIfNecessary(testErrors, testFailures);
 	}
 
 	private void errorOrFailTestIfNecessary(final Queue<Throwable> testErrors, final Queue<AssertionError> testFailures)
@@ -133,16 +135,16 @@ public class CacheTest {
 			logger.error("", testFailure);
 		}
 
-		int testErrorsSize = testErrors.size();
+		int testErrorsCapacity = testErrors.size();
 
-		if (testErrorsSize > 0) {
-			throw new Exception(testErrorsSize + " threads threw an error during test execution.");
+		if (testErrorsCapacity > 0) {
+			throw new Exception(testErrorsCapacity + " threads threw an error during test execution.");
 		}
 
-		int testFailuresSize = testFailures.size();
+		int testFailuresCapacity = testFailures.size();
 
-		if (testFailuresSize > 0) {
-			throw new AssertionError(testFailuresSize + " threads reported a failure during test execution.");
+		if (testFailuresCapacity > 0) {
+			throw new AssertionError(testFailuresCapacity + " threads reported a failure during test execution.");
 		}
 	}
 
@@ -161,10 +163,10 @@ public class CacheTest {
 		}
 	}
 
-	private void testConcurrentMaxCacheSizeCache(final Cache cache, final int maxCacheSize,
+	private void testConcurrentMaxCacheCapacityCache(final Cache cache, final int maxCacheCapacity,
 		Queue<AssertionError> testFailures, Queue<Throwable> testErrors) {
 
-		if (maxCacheSize < 10) {
+		if (maxCacheCapacity < 10) {
 			throw new IllegalArgumentException("This test must be run with at least 10 values.");
 		}
 
@@ -173,7 +175,7 @@ public class CacheTest {
 				@Override
 				protected void testCache() {
 
-					for (int i = 0; i < maxCacheSize; i++) {
+					for (int i = 0; i < maxCacheCapacity; i++) {
 						cache.putIfAbsent("key" + i, "value" + i);
 					}
 				}
@@ -207,7 +209,7 @@ public class CacheTest {
 
 				@Override
 				protected void testCache() {
-					cache.put("key" + maxCacheSize, "value" + maxCacheSize);
+					cache.put("key" + maxCacheCapacity, "value" + maxCacheCapacity);
 				}
 			}.run();
 

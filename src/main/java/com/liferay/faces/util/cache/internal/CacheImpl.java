@@ -33,6 +33,10 @@ public class CacheImpl<K, V> implements Cache<K, V> {
 		this.internalCache = new HashMap<K, V>();
 	}
 
+	public CacheImpl(int initialCapacity) {
+		this.internalCache = new HashMap<K, V>(initialCapacity);
+	}
+
 	@Override
 	public boolean containsKey(K key) {
 		return internalCache.containsKey(key);

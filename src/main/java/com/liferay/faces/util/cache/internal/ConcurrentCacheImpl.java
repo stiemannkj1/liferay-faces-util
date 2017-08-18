@@ -36,6 +36,10 @@ public class ConcurrentCacheImpl<K, V> implements Serializable, Cache<K, V> {
 		this.internalCache = new ConcurrentHashMap<K, V>();
 	}
 
+	public ConcurrentCacheImpl(int initialCapacity) {
+		this.internalCache = new ConcurrentHashMap<K, V>(initialCapacity);
+	}
+
 	@Override
 	public boolean containsKey(K key) {
 		return internalCache.containsKey(key);

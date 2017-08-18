@@ -25,13 +25,13 @@ import com.liferay.faces.util.cache.Cache;
 /**
  * @author  Kyle Stiemann
  */
-public class CacheMaxSizeImpl<K, V> implements Cache<K, V> {
+public class CacheMaxCapacityLRUImpl<K, V> implements Cache<K, V> {
 
 	// Private Final Data Members
 	private final Map<K, V> internalCache;
 
-	public CacheMaxSizeImpl(int maxCacheSize) {
-		internalCache = new LinkedHashMapMaxSizeImpl<K, V>(maxCacheSize);
+	public CacheMaxCapacityLRUImpl(int intitialCapacity, int maxCapacity) {
+		internalCache = new LinkedHashMapMaxCapacityLRUImpl<K, V>(intitialCapacity, maxCapacity);
 	}
 
 	@Override
@@ -67,17 +67,17 @@ public class CacheMaxSizeImpl<K, V> implements Cache<K, V> {
 		return retValue;
 	}
 
-	private static class LinkedHashMapMaxSizeImpl<K, V> extends LinkedHashMap<K, V> {
+	private static class LinkedHashMapMaxCapacityLRUImpl<K, V> extends LinkedHashMap<K, V> {
 
 		// Private Final Data Members
 		private final int maxSize;
 
-		public LinkedHashMapMaxSizeImpl(int maxSize) {
+		public LinkedHashMapMaxCapacityLRUImpl(int initialCapacity, int maxSize) {
 
 			// Call the constructor and set the intialCapacity and loadFactor to default values while setting
 			// accessOrder to true to ensure that the LinkedHashMap removes the least recently used value. For more
 			// details, see here: https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html
-			super(16, 0.75f, true);
+			super(initialCapacity, 0.75f, true);
 			this.maxSize = maxSize;
 		}
 

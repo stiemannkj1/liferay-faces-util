@@ -35,19 +35,19 @@ import com.liferay.faces.util.cache.Cache;
  *
  * @author  Kyle Stiemann
  */
-public class ConcurrentCacheMaxSizeImpl<K, V> implements Serializable, Cache<K, V> {
+public class ConcurrentCacheMaxCapacityLRUImpl<K, V> implements Serializable, Cache<K, V> {
 
 	// serialVersionUID
 	private static final long serialVersionUID = 6181106754606500765L;
 
 	// Private Final Data Members
 	private final ConcurrentHashMap<K, CachedValue<V>> internalCache;
-	private final Integer maxCacheSize;
+	private final Integer maxCapacity;
 
-	public ConcurrentCacheMaxSizeImpl(int maxCacheSize) {
+	public ConcurrentCacheMaxCapacityLRUImpl(int initialCapacity, int maxCapacity) {
 
-		this.internalCache = new ConcurrentHashMap<K, CachedValue<V>>();
-		this.maxCacheSize = maxCacheSize;
+		this.internalCache = new ConcurrentHashMap<K, CachedValue<V>>(initialCapacity);
+		this.maxCapacity = maxCapacity;
 	}
 
 	@Override
@@ -106,9 +106,9 @@ public class ConcurrentCacheMaxSizeImpl<K, V> implements Serializable, Cache<K, 
 
 		// Don't synchronize on the ConcurrentHashMap in case it synchronizes on itself internally (avoid locking on
 		// reads).
-		synchronized (maxCacheSize) {
+		synchronized (maxCapacity) {
 
-			if ((internalCache.size() >= maxCacheSize) && !internalCache.containsKey(key)) {
+			if ((internalCache.size() >= maxCapacity) && !internalCache.containsKey(key)) {
 
 				Set<Map.Entry<K, CachedValue<V>>> entrySet = internalCache.entrySet();
 				Map.Entry<K, CachedValue<V>> leastRecentlyAccessedEntry = null;
