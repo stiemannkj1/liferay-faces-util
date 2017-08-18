@@ -166,7 +166,7 @@ public class I18nImpl implements I18n, Serializable {
 			facesResourceBundle = ResourceBundle.getBundle(messageBundle, locale, classLoader, new UTF8Control());
 
 			if (facesResourceBundleCache != null) {
-				facesResourceBundle = facesResourceBundleCache.put(locale, facesResourceBundle);
+				facesResourceBundle = facesResourceBundleCache.putIfAbsent(locale, facesResourceBundle);
 			}
 		}
 

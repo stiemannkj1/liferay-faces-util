@@ -146,13 +146,13 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 					message = resourceBundle.getString(messageId);
 
 					if (messageCache != null) {
-						message = messageCache.put(key, message);
+						message = messageCache.putIfAbsent(key, message);
 					}
 				}
 				catch (MissingResourceException e) {
 
 					if (messageCache != null) {
-						message = messageCache.put(key, "");
+						messageCache.putIfAbsent(key, "");
 					}
 				}
 			}

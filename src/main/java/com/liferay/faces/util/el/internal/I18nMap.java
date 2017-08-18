@@ -111,7 +111,7 @@ public class I18nMap extends I18nMapCompat implements SystemEventListener {
 					message = i18n.getMessage(facesContext, locale, keyAsString);
 
 					if ((message != null) && (messageCache != null)) {
-						message = messageCache.put(messageKey, message);
+						message = messageCache.putIfAbsent(messageKey, message);
 					}
 				}
 			}
