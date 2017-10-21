@@ -74,6 +74,7 @@
 	</scm>
 
 	<properties>
+		<bnd.version>3.5.0</bnd.version>
 		<faces.api.version>${faces.spec.version}</faces.api.version>
 		<faces.spec.version>2.1</faces.spec.version>
 		<full.version>${project.version} (${timestamp} AD)</full.version>
@@ -95,6 +96,38 @@
 					</configuration>
 				</plugin>
 				<plugin>
+					<groupId>biz.aQute.bnd</groupId>
+					<artifactId>bnd-maven-plugin</artifactId>
+					<version>${bnd.version}</version>
+					<configuration>
+						<!-- Consult individual package-info.java files to determine Export-Packages and versions. -->
+						<bnd><![CDATA[-exportcontents: ${packages;VERSIONED}]]></bnd>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>bnd-process</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>biz.aQute.bnd</groupId>
+					<artifactId>bnd-baseline-maven-plugin</artifactId>
+					<version>${bnd.version}</version>
+					<configuration>
+						<includeDistributionManagement>false</includeDistributionManagement>
+					</configuration>
+					<executions>
+						<execution>
+							<id>baseline</id>
+							<goals>
+								<goal>baseline</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.7</version>
@@ -104,7 +137,9 @@
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>2.4</version>
 					<configuration>
+						<useDefaultManifestFile>true</useDefaultManifestFile>
 						<archive>
+							<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
 							<manifestEntries>
 								<Built-By>Release Manager</Built-By>
 								<Implementation-Title>${project.name}</Implementation-Title>
@@ -192,6 +227,14 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>bnd-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>bnd-baseline-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
@@ -262,6 +305,12 @@
 			<optional>true</optional>
 		</dependency>
 		<!-- END: Only required for file upload -->
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>osgi.annotation</artifactId>
+			<version>6.0.1</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>javax.el</groupId>
 			<artifactId>javax.el-api</artifactId>
