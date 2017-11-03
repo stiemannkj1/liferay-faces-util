@@ -96,38 +96,6 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>biz.aQute.bnd</groupId>
-					<artifactId>bnd-maven-plugin</artifactId>
-					<version>${bnd.version}</version>
-					<configuration>
-						<!-- Consult individual package-info.java files to determine Export-Packages and versions. -->
-						<bnd><![CDATA[-exportcontents: ${packages;VERSIONED}]]></bnd>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>bnd-process</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>biz.aQute.bnd</groupId>
-					<artifactId>bnd-baseline-maven-plugin</artifactId>
-					<version>${bnd.version}</version>
-					<configuration>
-						<includeDistributionManagement>false</includeDistributionManagement>
-					</configuration>
-					<executions>
-						<execution>
-							<id>baseline</id>
-							<goals>
-								<goal>baseline</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.7</version>
@@ -233,10 +201,43 @@
 			<plugin>
 				<groupId>biz.aQute.bnd</groupId>
 				<artifactId>bnd-maven-plugin</artifactId>
+				<version>${bnd.version}</version>
+				<configuration>
+					<bnd>
+						<![CDATA[
+							# Consult individual package-info.java files to determine Export-Packages and versions.
+							-exportcontents: ${packages;VERSIONED}
+							# javax.el is automatically imported with the following versions:
+							# javax.el;version="[2.2.0,3.0.0)", but versions 3.0.0+ are also valid.
+							Import-Package: javax.el;version="[2.2.0,4.0.0)",*
+							SPI-Consumer: *
+							SPI-Producer: *
+						]]>
+					</bnd>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>bnd-process</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>biz.aQute.bnd</groupId>
 				<artifactId>bnd-baseline-maven-plugin</artifactId>
+				<version>${bnd.version}</version>
+				<configuration>
+					<includeDistributionManagement>false</includeDistributionManagement>
+				</configuration>
+				<executions>
+					<execution>
+						<id>baseline</id>
+						<goals>
+							<goal>baseline</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -337,6 +338,12 @@
 			<groupId>javax.faces</groupId>
 			<artifactId>javax.faces-api</artifactId>
 			<version>${faces.api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.faces</artifactId>
+			<version>2.2.16-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
