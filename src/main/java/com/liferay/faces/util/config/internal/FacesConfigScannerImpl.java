@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
@@ -262,9 +261,9 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 		if (FacesBundleUtil.isCurrentWarThinWab()) {
 
 			FacesContext initFacesContext = FacesContext.getCurrentInstance();
-			Collection<Bundle> values = FacesBundleUtil.getFacesBundles(initFacesContext);
+			Collection<Bundle> facesBundles = FacesBundleUtil.getFacesBundles(initFacesContext);
 
-			for (Bundle bundle : values) {
+			for (Bundle bundle : facesBundles) {
 
 				String symbolicName = bundle.getSymbolicName();
 
