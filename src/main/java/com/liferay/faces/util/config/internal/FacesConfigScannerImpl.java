@@ -269,7 +269,7 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 
 				if ("org.glassfish.javax.faces".equals(symbolicName)) {
 
-					URL mojarraConfigURL = classLoader.getResource(MOJARRA_CONFIG_PATH);
+					URL mojarraConfigURL = bundle.getResource(MOJARRA_CONFIG_PATH);
 
 					if (mojarraConfigURL != null) {
 						facesConfigURLs.add(mojarraConfigURL);
