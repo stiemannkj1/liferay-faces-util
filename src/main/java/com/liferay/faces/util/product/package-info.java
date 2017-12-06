@@ -1,2 +1,2 @@
-@org.osgi.annotation.versioning.Version("3.1.1")
+@org.osgi.annotation.versioning.Version("3.2.0")
 package com.liferay.faces.util.product;

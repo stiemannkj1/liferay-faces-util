@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 import javax.faces.application.ViewHandler;
@@ -31,9 +30,7 @@ import javax.faces.webapp.FacesServlet;
 import javax.xml.parsers.SAXParser;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.wiring.BundleWiring;
 
-import com.liferay.faces.osgi.util.FacesBundleUtil;
 import com.liferay.faces.util.config.ConfiguredServlet;
 import com.liferay.faces.util.config.ConfiguredServletMapping;
 import com.liferay.faces.util.config.FacesConfig;
@@ -41,6 +38,8 @@ import com.liferay.faces.util.config.WebConfig;
 import com.liferay.faces.util.internal.CloseableUtil;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
+import com.liferay.faces.util.osgi.FacesBundleUtil;
+import com.liferay.faces.util.osgi.internal.OSGiResourceProviderUtil;
 import com.liferay.faces.util.product.Product;
 import com.liferay.faces.util.product.ProductFactory;
 
@@ -276,40 +275,8 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 					}
 				}
 
-				BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-				Collection<String> resourceFilePaths = new ArrayList<String>(bundleWiring.listResources("/",
-							"*faces-config.xml", BundleWiring.LISTRESOURCES_RECURSE));
-
-				for (String resourceFilePath : resourceFilePaths) {
-
-					Enumeration<URL> resourceURLs = null;
-
-					try {
-
-						// FACES-2650 Because there may be multiple jars in our bundle, some resources may have exactly
-						// the same reourceFilePath. We need to find all the resources with this resourceFilePath in all
-						// jars.
-						resourceURLs = bundle.getResources(resourceFilePath);
-					}
-					catch (IOException ioe) {
-						logger.error(ioe);
-					}
-
-					if (resourceURLs != null) {
-
-						while (resourceURLs.hasMoreElements()) {
-
-							URL resourceURL = resourceURLs.nextElement();
-
-							if (resourceURL != null) {
-								facesConfigURLs.add(resourceURL);
-							}
-							else {
-								logger.warn("URL for resourceFilePath=[{0}] is null.", resourceFilePath);
-							}
-						}
-					}
-				}
+				facesConfigURLs.addAll(OSGiResourceProviderUtil.getResources("/META-INF/", "*faces-config.xml",
+						bundle));
 			}
 		}
 		else {
