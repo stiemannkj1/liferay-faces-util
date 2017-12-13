@@ -51,18 +51,22 @@ public final class OSGiResourceProviderUtil {
 
 		List<URL> resources = new ArrayList<URL>();
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-		Collection<String> resourceFilePaths = bundleWiring.listResources(path, resourcefilePattern,
-				BundleWiring.LISTRESOURCES_RECURSE);
 
-		for (String resourceFilePath : resourceFilePaths) {
+		if (bundleWiring != null) {
 
-			// FACES-2650 Because there may be multiple jars in our bundle, some resources may have exactly
-			// the same reourceFilePath. We need to find all the resources with this resourceFilePath in all
-			// jars.
-			resources.addAll(Collections.list(bundle.getResources(resourceFilePath)));
+			Collection<String> resourceFilePaths = bundleWiring.listResources(path, resourcefilePattern,
+					BundleWiring.LISTRESOURCES_RECURSE);
+
+			for (String resourceFilePath : resourceFilePaths) {
+
+				// FACES-2650 Because there may be multiple jars in our bundle, some resources may have exactly
+				// the same reourceFilePath. We need to find all the resources with this resourceFilePath in all
+				// jars.
+				resources.addAll(Collections.list(bundle.getResources(resourceFilePath)));
+			}
+
+			resources.removeAll(Collections.singleton(null));
 		}
-
-		resources.removeAll(Collections.singleton(null));
 
 		return Collections.unmodifiableList(resources);
 	}

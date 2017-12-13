@@ -144,64 +144,83 @@ public final class FacesBundleUtil {
 
 			String symbolicName = bundle.getSymbolicName();
 
-			if (isBridgeBundle(symbolicName, "api")) {
+			if (!isBridgeBundle(symbolicName, "api")) {
+				continue;
+			}
 
-				BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-				List<BundleWire> bundleWires = bundleWiring.getProvidedWires(BundleRevision.PACKAGE_NAMESPACE);
-				boolean addedBridgeImplBundle = false;
-				boolean addedBridgeExtBundle = false;
+			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
 
-				for (BundleWire bundleWire : bundleWires) {
+			if (bundleWiring == null) {
+				continue;
+			}
 
-					Bundle bundleDependingOnBridgeAPI = bundleWire.getRequirer().getBundle();
-					symbolicName = bundleDependingOnBridgeAPI.getSymbolicName();
+			List<BundleWire> bundleWires = bundleWiring.getProvidedWires(BundleRevision.PACKAGE_NAMESPACE);
 
-					if (isBridgeBundle(symbolicName, "impl")) {
+			if (bundleWires == null) {
+				continue;
+			}
 
-						facesBundles.put(symbolicName, bundleDependingOnBridgeAPI);
-						addRequiredBundlesRecurse(facesBundles, bundleDependingOnBridgeAPI);
-						addedBridgeImplBundle = true;
-					}
-					else if (isBridgeBundle(symbolicName, "ext")) {
+			boolean addedBridgeImplBundle = false;
+			boolean addedBridgeExtBundle = false;
 
-						facesBundles.put(symbolicName, bundleDependingOnBridgeAPI);
-						addRequiredBundlesRecurse(facesBundles, bundleDependingOnBridgeAPI);
-						addedBridgeExtBundle = true;
-					}
+			for (BundleWire bundleWire : bundleWires) {
 
-					if (addedBridgeImplBundle && addedBridgeExtBundle) {
-						break;
-					}
+				Bundle bundleDependingOnBridgeAPI = bundleWire.getRequirer().getBundle();
+				symbolicName = bundleDependingOnBridgeAPI.getSymbolicName();
+
+				if (isBridgeBundle(symbolicName, "impl")) {
+
+					facesBundles.put(symbolicName, bundleDependingOnBridgeAPI);
+					addRequiredBundlesRecurse(facesBundles, bundleDependingOnBridgeAPI);
+					addedBridgeImplBundle = true;
+				}
+				else if (isBridgeBundle(symbolicName, "ext")) {
+
+					facesBundles.put(symbolicName, bundleDependingOnBridgeAPI);
+					addRequiredBundlesRecurse(facesBundles, bundleDependingOnBridgeAPI);
+					addedBridgeExtBundle = true;
 				}
 
-				break;
+				if (addedBridgeImplBundle && addedBridgeExtBundle) {
+					break;
+				}
 			}
+
+			break;
 		}
 	}
 
 	private static void addRequiredBundlesRecurse(Map<String, Bundle> facesBundles, Bundle bundle) {
 
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-		List<BundleWire> bundleWires = bundleWiring.getRequiredWires(BundleRevision.PACKAGE_NAMESPACE);
 
-		for (BundleWire bundleWire : bundleWires) {
+		if (bundleWiring != null) {
 
-			bundle = bundleWire.getProvider().getBundle();
+			List<BundleWire> bundleWires = bundleWiring.getRequiredWires(BundleRevision.PACKAGE_NAMESPACE);
 
-			long bundleId = bundle.getBundleId();
+			if (bundleWires != null) {
 
-			if (!((bundleId == 0) || facesBundles.containsValue(bundle))) {
+				for (BundleWire bundleWire : bundleWires) {
 
-				String key = Long.toString(bundleId);
-				String symbolicName = bundle.getSymbolicName();
+					bundle = bundleWire.getProvider().getBundle();
 
-				if (symbolicName.startsWith("com.liferay.faces") || MOJARRA_SYMBOLIC_NAME.equals(symbolicName) ||
-						PRIMEFACES_SYMBOLIC_NAME.equals(symbolicName)) {
-					key = symbolicName;
+					long bundleId = bundle.getBundleId();
+
+					if (!((bundleId == 0) || facesBundles.containsValue(bundle))) {
+
+						String key = Long.toString(bundleId);
+						String symbolicName = bundle.getSymbolicName();
+
+						if (symbolicName.startsWith("com.liferay.faces") ||
+								MOJARRA_SYMBOLIC_NAME.equals(symbolicName) ||
+								PRIMEFACES_SYMBOLIC_NAME.equals(symbolicName)) {
+							key = symbolicName;
+						}
+
+						facesBundles.put(key, bundle);
+						addRequiredBundlesRecurse(facesBundles, bundle);
+					}
 				}
-
-				facesBundles.put(key, bundle);
-				addRequiredBundlesRecurse(facesBundles, bundle);
 			}
 		}
 	}

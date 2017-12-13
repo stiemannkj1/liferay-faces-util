@@ -112,6 +112,11 @@ public class AnnotationProviderOSGiImpl extends AnnotationProvider {
 			for (Bundle bundle : facesBundles) {
 
 				BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+
+				if (bundleWiring == null) {
+					continue;
+				}
+
 				Collection<String> classFilePaths = bundleWiring.listResources("/", "*.class",
 						BundleWiring.LISTRESOURCES_RECURSE);
 
