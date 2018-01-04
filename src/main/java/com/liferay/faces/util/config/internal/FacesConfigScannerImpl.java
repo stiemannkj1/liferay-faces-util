@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.faces.application.ViewHandler;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.webapp.FacesServlet;
 import javax.xml.parsers.SAXParser;
@@ -256,20 +257,13 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 	private List<URL> getFacesConfigURLs(ClassLoader classLoader) throws IOException {
 
 		List<URL> facesConfigURLs = new ArrayList<URL>();
-		URL webInfFacesConfigURL = null;
+		FacesContext initFacesContext = FacesContext.getCurrentInstance();
 
 		if (FacesBundleUtil.isCurrentWarThinWab()) {
 
-			FacesContext initFacesContext = FacesContext.getCurrentInstance();
 			Collection<Bundle> facesBundles = FacesBundleUtil.getFacesBundles(initFacesContext);
 
 			for (Bundle bundle : facesBundles) {
-
-				// There should only be one WAB in the list, but just in case there are multiple WABs, only save the
-				// first /WEB-INF/faces-config.xml.
-				if ((webInfFacesConfigURL == null) && FacesBundleUtil.isWab(bundle)) {
-					webInfFacesConfigURL = bundle.getEntry(FACES_CONFIG_WEB_INF_PATH);
-				}
 
 				String symbolicName = bundle.getSymbolicName();
 
@@ -295,8 +289,10 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 			}
 
 			facesConfigURLs.addAll(Collections.list(classLoader.getResources(FACES_CONFIG_META_INF_PATH)));
-			webInfFacesConfigURL = classLoader.getResource(FACES_CONFIG_WEB_INF_PATH);
 		}
+
+		ExternalContext externalContext = initFacesContext.getExternalContext();
+		URL webInfFacesConfigURL = externalContext.getResource(FACES_CONFIG_WEB_INF_PATH);
 
 		if (webInfFacesConfigURL != null) {
 			facesConfigURLs.add(webInfFacesConfigURL);
