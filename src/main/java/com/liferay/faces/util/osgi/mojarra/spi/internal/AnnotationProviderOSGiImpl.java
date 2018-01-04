@@ -131,8 +131,7 @@ public class AnnotationProviderOSGiImpl extends AnnotationProvider {
 						}
 
 						String className = classFilePath.replaceAll("\\.class$", "").replace("/", ".");
-						ClassLoader bundleClassLoader = bundleWiring.getClassLoader();
-						Class<?> clazz = bundleClassLoader.loadClass(className);
+						Class<?> clazz = bundle.loadClass(className);
 						Annotation[] classAnnotations = clazz.getAnnotations();
 
 						for (Annotation annotation : classAnnotations) {
