@@ -15,16 +15,18 @@
  */
 package com.liferay.faces.util.osgi.mojarra.spi.internal;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 
+import org.osgi.framework.Bundle;
+
 import com.liferay.faces.util.osgi.FacesBundleUtil;
+import com.liferay.faces.util.osgi.internal.InternalFacesBundleUtil;
 import com.liferay.faces.util.osgi.internal.OSGiResourceProviderUtil;
 
 import com.sun.faces.spi.FacesConfigResourceProvider;
@@ -38,6 +40,21 @@ import com.sun.faces.spi.FacesConfigResourceProvider;
  */
 public class FacesConfigResourceProviderOSGiImpl implements FacesConfigResourceProvider {
 
+	private static boolean isDefaultFacesConfig(URI facesConfigURI) {
+
+		String path = facesConfigURI.getPath();
+
+		return path.equals("/META-INF/faces-config.xml");
+	}
+
+	private static boolean isFacesConfigInCurrentFacesWab(URI facesConfigURI, Bundle currentFacesWab) {
+
+		long currentFacesWabId = currentFacesWab.getBundleId();
+		String authority = facesConfigURI.getAuthority();
+
+		return authority.startsWith(currentFacesWabId + ".");
+	}
+
 	/**
 	 * Returns the list of resources matching the "*.faces-config.xml" wildcard found within the OSGi bundle. For more
 	 * information, see {@link com.sun.faces.spi.ConfigurationResourceProvider#getResources(ServletContext)}.
@@ -46,18 +63,30 @@ public class FacesConfigResourceProviderOSGiImpl implements FacesConfigResourceP
 	public Collection<URI> getResources(ServletContext servletContext) {
 
 		String facesConfigPattern = "*.faces-config.xml";
+		boolean isCurrentWarThinWab = FacesBundleUtil.isCurrentWarThinWab();
 
-		if (FacesBundleUtil.isCurrentWarThinWab()) {
+		if (isCurrentWarThinWab) {
 
 			// Get all faces-config.xml files and *.faces-config.xml files.
 			facesConfigPattern = "*faces-config.xml";
 		}
 
-		try {
-			return OSGiResourceProviderUtil.getResourcesAsURIs("/META-INF/", facesConfigPattern, servletContext);
+		Collection<URI> facesConfigURIs = new ArrayList<URI>(OSGiResourceProviderUtil.getResourcesAsURIs("/META-INF/",
+					facesConfigPattern, servletContext));
+		Bundle currentFacesWab = InternalFacesBundleUtil.getCurrentFacesWab(servletContext);
+		Iterator<URI> iterator = facesConfigURIs.iterator();
+
+		while (iterator.hasNext()) {
+
+			URI facesConfigURI = iterator.next();
+
+			// Mojarra finds all the META-INF/faces-config.xml files that included inside each thin war.
+			if (isCurrentWarThinWab && isFacesConfigInCurrentFacesWab(facesConfigURI, currentFacesWab) &&
+					isDefaultFacesConfig(facesConfigURI)) {
+				iterator.remove();
+			}
 		}
-		catch (IOException e) {
-			return Collections.emptyList();
-		}
+
+		return Collections.unmodifiableCollection(facesConfigURIs);
 	}
 }

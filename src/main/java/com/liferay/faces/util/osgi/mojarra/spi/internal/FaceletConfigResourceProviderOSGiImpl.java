@@ -15,10 +15,8 @@
  */
 package com.liferay.faces.util.osgi.mojarra.spi.internal;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 
 import javax.servlet.ServletContext;
 
@@ -43,12 +41,6 @@ public class FaceletConfigResourceProviderOSGiImpl implements ConfigurationResou
 	 */
 	@Override
 	public Collection<URI> getResources(ServletContext servletContext) {
-
-		try {
-			return OSGiResourceProviderUtil.getResourcesAsURIs("/META-INF/", "*.taglib.xml", servletContext);
-		}
-		catch (IOException e) {
-			return Collections.emptyList();
-		}
+		return OSGiResourceProviderUtil.getResourcesAsURIs("/META-INF/", "*.taglib.xml", servletContext);
 	}
 }

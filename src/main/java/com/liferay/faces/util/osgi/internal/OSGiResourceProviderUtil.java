@@ -46,8 +46,7 @@ public final class OSGiResourceProviderUtil {
 		throw new AssertionError();
 	}
 
-	public static Collection<URL> getResources(String path, String resourcefilePattern, Bundle bundle)
-		throws IOException {
+	public static Collection<URL> getResources(String path, String resourcefilePattern, Bundle bundle) {
 
 		List<URL> resources = new ArrayList<URL>();
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
@@ -59,10 +58,22 @@ public final class OSGiResourceProviderUtil {
 
 			for (String resourceFilePath : resourceFilePaths) {
 
-				// FACES-2650 Because there may be multiple jars in our bundle, some resources may have exactly
-				// the same reourceFilePath. We need to find all the resources with this resourceFilePath in all
-				// jars.
-				resources.addAll(Collections.list(bundle.getResources(resourceFilePath)));
+				try {
+
+					// FACES-2650 Because there may be multiple jars in our bundle, some resources may have exactly
+					// the same reourceFilePath. We need to find all the resources with this resourceFilePath in all
+					// jars.
+					resources.addAll(Collections.list(bundle.getResources(resourceFilePath)));
+				}
+				catch (IOException e) {
+
+					long bundleId = bundle.getBundleId();
+					String symbolicName = bundle.getSymbolicName();
+					logger.error(
+						"Failed to obtain URLs of resources with path \"{0}\" from bundle with bundle id \"{1}\" and symbolic name \"{2}\" due to the following error:",
+						resourceFilePath, bundleId, symbolicName);
+					logger.error(e);
+				}
 			}
 
 			resources.removeAll(Collections.singleton(null));
@@ -72,11 +83,10 @@ public final class OSGiResourceProviderUtil {
 	}
 
 	public static Collection<URI> getResourcesAsURIs(String path, String resourceFilePattern,
-		ServletContext servletContext) throws IOException {
+		ServletContext servletContext) {
 
 		List<URI> resourceURIs = new ArrayList<URI>();
-		Collection<Bundle> facesBundles = FacesBundleUtil.getFacesBundles(servletContext);
-		Collection<URL> resourceURLs = getResources(path, resourceFilePattern, facesBundles);
+		Collection<URL> resourceURLs = getResources(path, resourceFilePattern, servletContext);
 
 		for (URL resourceURL : resourceURLs) {
 
@@ -92,8 +102,9 @@ public final class OSGiResourceProviderUtil {
 	}
 
 	private static Collection<URL> getResources(String path, String resourcefilePattern,
-		Collection<Bundle> facesBundles) throws IOException {
+		ServletContext servletContext) {
 
+		Collection<Bundle> facesBundles = FacesBundleUtil.getFacesBundles(servletContext);
 		List<URL> resources;
 
 		if (!facesBundles.isEmpty()) {
@@ -101,7 +112,12 @@ public final class OSGiResourceProviderUtil {
 			resources = new ArrayList<URL>();
 
 			for (Bundle bundle : facesBundles) {
-				resources.addAll(getResources(path, resourcefilePattern, bundle));
+
+				String bundleSymbolicName = bundle.getSymbolicName();
+
+				if (!bundleSymbolicName.equals(InternalFacesBundleUtil.MOJARRA_SYMBOLIC_NAME)) {
+					resources.addAll(getResources(path, resourcefilePattern, bundle));
+				}
 			}
 
 			resources = Collections.unmodifiableList(resources);
