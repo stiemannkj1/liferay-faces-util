@@ -27,7 +27,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWire;
@@ -41,9 +40,6 @@ import com.liferay.faces.util.osgi.internal.InternalFacesBundleUtil;
  */
 public final class FacesBundleUtil {
 
-	// Private Constants
-	private static final boolean FRAMEWORK_UTIL_DETECTED;
-
 	// Package-Private Constants
 	/* package-private */ static final long CURRENT_WAB_KEY = Long.MIN_VALUE;
 	/* package-private */ static final long MOJARRA_KEY = CURRENT_WAB_KEY + 1;
@@ -55,27 +51,6 @@ public final class FacesBundleUtil {
 	/* package-private */ static final long LIFERAY_FACES_CLAY_KEY = LIFERAY_FACES_BRIDGE_EXT_KEY + 1;
 	/* package-private */ static final long LIFERAY_FACES_PORTAL_KEY = LIFERAY_FACES_CLAY_KEY + 1;
 	/* package-private */ static final long LIFERAY_FACES_ALLOY_KEY = LIFERAY_FACES_PORTAL_KEY + 1;
-
-	static {
-
-		boolean frameworkUtilDetected = false;
-
-		try {
-
-			Class.forName("org.osgi.framework.FrameworkUtil");
-			frameworkUtilDetected = true;
-		}
-		catch (Throwable t) {
-
-			if (!((t instanceof NoClassDefFoundError) || (t instanceof ClassNotFoundException))) {
-
-				System.err.println("An unexpected error occurred when attempting to detect OSGi:");
-				t.printStackTrace(System.err);
-			}
-		}
-
-		FRAMEWORK_UTIL_DETECTED = frameworkUtilDetected;
-	}
 
 	private FacesBundleUtil() {
 		throw new AssertionError();
@@ -104,14 +79,14 @@ public final class FacesBundleUtil {
 	}
 
 	public static boolean isCurrentWarThinWab() {
-		return FRAMEWORK_UTIL_DETECTED && !isCurrentBundleThickWab();
+		return InternalFacesBundleUtil.OSGI_ENVIRONMENT_DETECTED && !isCurrentBundleThickWab();
 	}
 
 	/* package-private */ static Map<Long, Bundle> getFacesBundlesUsingServletContext(Object context) {
 
 		Map<Long, Bundle> facesBundles = null;
 
-		if (FRAMEWORK_UTIL_DETECTED) {
+		if (InternalFacesBundleUtil.OSGI_ENVIRONMENT_DETECTED) {
 
 			facesBundles = (Map<Long, Bundle>) InternalFacesBundleUtil.getServletContextAttribute(context,
 					FacesBundleUtil.class.getName());
@@ -123,7 +98,7 @@ public final class FacesBundleUtil {
 				if (wabBundle != null) {
 
 					// TreeMap is used along with negative keys for Mojarra, Liferay Faces, and Primefaces bundles to
-					// ensure that bundles explicitly related to JSF first when iterating over the bundles.
+					// ensure that bundles explicitly related to JSF appear first when iterating over the bundles.
 					facesBundles = new TreeMap<Long, Bundle>();
 					facesBundles.put(CURRENT_WAB_KEY, wabBundle);
 
@@ -273,8 +248,13 @@ public final class FacesBundleUtil {
 
 	private static boolean isWab(Bundle bundle) {
 
-		Dictionary<String, String> headers = bundle.getHeaders();
-		String webContextPathHeader = headers.get("Web-ContextPath");
+		String webContextPathHeader = null;
+
+		if (bundle != null) {
+
+			Dictionary<String, String> headers = bundle.getHeaders();
+			webContextPathHeader = headers.get("Web-ContextPath");
+		}
 
 		return webContextPathHeader != null;
 	}
@@ -306,9 +286,7 @@ public final class FacesBundleUtil {
 			servletContext.setAttribute(servletContextAttributeName, servletContextAttributeValue);
 		}
 		else {
-			throw new IllegalArgumentException("context [" + context.getClass().getName() + "] is not an instanceof " +
-				FacesContext.class.getName() + " or " + ExternalContext.class.getName() + " or " +
-				ServletContext.class.getName());
+			InternalFacesBundleUtil.throwIllegalContextClassException(context);
 		}
 	}
 }

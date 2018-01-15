@@ -38,6 +38,7 @@ import javax.servlet.ServletContext;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 
 /**
@@ -46,8 +47,67 @@ import org.osgi.framework.BundleContext;
 public final class InternalFacesBundleUtil {
 
 	// Public Constants
-	public static final String PRIMEFACES_SYMBOLIC_NAME = "org.primefaces";
 	public static final String MOJARRA_SYMBOLIC_NAME = "org.glassfish.javax.faces";
+	public static final String PRIMEFACES_SYMBOLIC_NAME = "org.primefaces";
+	public static final boolean OSGI_ENVIRONMENT_DETECTED;
+	public static final boolean LIFERAY_FACES_OSGI_WEAVER_DETECTED;
+
+	static {
+
+		boolean frameworkUtilDetected = false;
+
+		try {
+
+			Class.forName("org.osgi.framework.FrameworkUtil");
+			frameworkUtilDetected = true;
+		}
+		catch (Throwable t) {
+
+			if (!((t instanceof NoClassDefFoundError) || (t instanceof ClassNotFoundException))) {
+
+				System.err.println("An unexpected error occurred when attempting to detect OSGi:");
+				t.printStackTrace(System.err);
+			}
+		}
+
+		boolean osgiEnvironmentDetected = false;
+		boolean osgiWeaverDetected = false;
+
+		if (frameworkUtilDetected) {
+
+			Bundle currentBundle = FrameworkUtil.getBundle(InternalFacesBundleUtil.class);
+
+			if (currentBundle != null) {
+
+				osgiEnvironmentDetected = true;
+
+				BundleContext bundleContext = currentBundle.getBundleContext();
+
+				if (bundleContext != null) {
+
+					Bundle[] bundles = bundleContext.getBundles();
+
+					if (bundles != null) {
+
+						for (Bundle bundle : bundles) {
+
+							String symbolicName = bundle.getSymbolicName();
+
+							if ("com.liferay.faces.osgi.weaver".equals(symbolicName)) {
+
+								osgiWeaverDetected = true;
+
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		OSGI_ENVIRONMENT_DETECTED = osgiEnvironmentDetected;
+		LIFERAY_FACES_OSGI_WEAVER_DETECTED = osgiWeaverDetected;
+	}
 
 	private InternalFacesBundleUtil() {
 		throw new AssertionError();
@@ -70,7 +130,7 @@ public final class InternalFacesBundleUtil {
 
 	public static Object getServletContextAttribute(Object context, String servletContextAttributeName) {
 
-		Object servletContextAttributeValue;
+		Object servletContextAttributeValue = null;
 		boolean isFacesContext = context instanceof FacesContext;
 
 		if (isFacesContext || (context instanceof ExternalContext)) {
@@ -95,18 +155,22 @@ public final class InternalFacesBundleUtil {
 			servletContextAttributeValue = servletContext.getAttribute(servletContextAttributeName);
 		}
 		else {
-
-			String contextClassName = "null";
-
-			if (context != null) {
-				contextClassName = context.getClass().getName();
-			}
-
-			throw new IllegalArgumentException("context [" + contextClassName + "] is not an instanceof " +
-				FacesContext.class.getName() + " or " + ExternalContext.class.getName() + " or " +
-				ServletContext.class.getName());
+			throwIllegalContextClassException(context);
 		}
 
 		return servletContextAttributeValue;
+	}
+
+	public static void throwIllegalContextClassException(Object context) throws IllegalArgumentException {
+
+		String contextClassName = "null";
+
+		if (context != null) {
+			contextClassName = context.getClass().getName();
+		}
+
+		throw new IllegalArgumentException("context [" + contextClassName + "] is not an instance of " +
+			FacesContext.class.getName() + " or " + ExternalContext.class.getName() + " or " +
+			ServletContext.class.getName());
 	}
 }
