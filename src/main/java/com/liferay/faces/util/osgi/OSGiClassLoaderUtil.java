@@ -414,7 +414,9 @@ public final class OSGiClassLoaderUtil {
 	private static boolean isClassFileInBundle(String className, Bundle bundle) {
 
 		String classFilePath = "/" + className.replace(".", "/") + ".class";
-		URL classFileURL = bundle.getResource(classFilePath);
+
+		// Use bundle.getEntry() to ensure that only the bundle is searched (and not the entire classpath).
+		URL classFileURL = bundle.getEntry(classFilePath);
 
 		return classFileURL != null;
 	}

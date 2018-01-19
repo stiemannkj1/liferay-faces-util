@@ -29,12 +29,12 @@ import javax.servlet.ServletContext;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.wiring.BundleRequirement;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
 
 import com.liferay.faces.util.osgi.internal.InternalFacesBundleUtil;
-import org.osgi.framework.wiring.BundleRequirement;
 
 
 /**
@@ -133,10 +133,6 @@ public final class FacesBundleUtil {
 
 			if (bundleWires != null) {
 
-				Dictionary<String, String> headers = bundle.getHeaders();
-				String importPackageHeader = headers.get("Import-Package");
-				String dynamicImportPackageHeader = headers.get("DynamicImport-Package");
-
 				for (BundleWire bundleWire : bundleWires) {
 
 					BundleRevision provider = bundleWire.getProvider();
@@ -147,86 +143,49 @@ public final class FacesBundleUtil {
 						long key = providerBundle.getBundleId();
 
 						if (key != 0) {
-						
+
 							String symbolicName = providerBundle.getSymbolicName();
 
 							if (symbolicName.equals(InternalFacesBundleUtil.MOJARRA_SYMBOLIC_NAME)) {
-
-								if (bundleDynamicallyDependsOnMojarra(importPackageHeader,
-											dynamicImportPackageHeader)) {
-									continue;
-								}
-
 								key = MOJARRA_KEY;
 							}
 							else if (isLiferayFacesBundle(symbolicName, "util")) {
-
-								if (bundleDynamicallyDependsOnLiferayFaces(importPackageHeader,
-											dynamicImportPackageHeader, "util")) {
-									continue;
-								}
-
 								key = LIFERAY_FACES_UTIL_KEY;
 							}
 							else if (symbolicName.equals(InternalFacesBundleUtil.PRIMEFACES_SYMBOLIC_NAME)) {
-
-								if (bundleDynamicallyDependsOnPrimeFaces(importPackageHeader,
-											dynamicImportPackageHeader)) {
-									continue;
-								}
-
 								key = PRIMEFACES_KEY;
 							}
 							else if (isBridgeBundle(symbolicName, "api")) {
-
-								if (bundleDynamicallyDependsOnLiferayFaces(importPackageHeader,
-											dynamicImportPackageHeader, "bridge")) {
-									continue;
-								}
-
 								key = LIFERAY_FACES_BRIDGE_API_KEY;
 							}
 							else if (isBridgeBundle(symbolicName, "impl")) {
-
-								// All Bridge Impl packages are private, so they cannot be imported (dynamically or
-								// statically) and Bridge Impl cannot be a dependency of a bundle.
 								key = LIFERAY_FACES_BRIDGE_IMPL_KEY;
 							}
 							else if (isBridgeBundle(symbolicName, "ext")) {
-
-								if (bundleDynamicallyDependsOnLiferayFaces(importPackageHeader,
-											dynamicImportPackageHeader, "bridge.ext")) {
-									continue;
-								}
-
 								key = LIFERAY_FACES_BRIDGE_EXT_KEY;
 							}
 							else if (isLiferayFacesBundle(symbolicName, "clay")) {
-
-								if (bundleDynamicallyDependsOnLiferayFaces(importPackageHeader,
-											dynamicImportPackageHeader, "clay")) {
-									continue;
-								}
-
 								key = LIFERAY_FACES_CLAY_KEY;
 							}
 							else if (isLiferayFacesBundle(symbolicName, "portal")) {
-
-								if (bundleDynamicallyDependsOnLiferayFaces(importPackageHeader,
-											dynamicImportPackageHeader, "portal")) {
-									continue;
-								}
-
 								key = LIFERAY_FACES_PORTAL_KEY;
 							}
 							else if (isLiferayFacesBundle(symbolicName, "alloy")) {
-
-								if (bundleDynamicallyDependsOnLiferayFaces(importPackageHeader,
-											dynamicImportPackageHeader, "alloy")) {
-									continue;
-								}
-
 								key = LIFERAY_FACES_ALLOY_KEY;
+							}
+
+							// If the provider bundle is Mojarra, PrimeFaces, or a Liferay Faces bundle and it was
+							// obtained dynamically, skip it. If a bundle uses an overly-broad DynamicImport-Package
+							// header, unnecessary and even erroneous bundles can be included in the list of Faces
+							// bundles. For example, some Liferay bundls use headers like
+							// "DynamicImport-Package:com.liferay.*" which will cause portlets such as the JSF Showcase
+							// portlet to include Liferay Faces Portal, Liferay Faces Alloy, and Liferay Faces Clay
+							// unnecessarily, which causes bugs in the JSF Showcase. Similarly, if PrimeFaces is added
+							// to the list of Faces bundles for a portlet which does not expect it, it can completely
+							// change the h:head renderer and add unnecessary front-end resources to every page causing
+							// performance issues and other bugs.
+							if (isFacesLibraryBundle(key) && isDynamicDependency(bundleWire)) {
+								continue;
 							}
 
 							if (!facesBundles.containsValue(providerBundle)) {
@@ -253,71 +212,6 @@ public final class FacesBundleUtil {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns true if a Liferay Faces bundle package is imported dynamically by an overly broad <code>
-	 * DynamicImport-Package</code> header value (such as <code>*</code>, <code>com.*</code>, <code>
-	 * com.liferay.*</code>, or <code>com.liferay.faces.*</code>) and <strong>zero</strong> Liferay Faces bundle
-	 * packages are imported statically.
-	 */
-	private static boolean bundleDynamicallyDependsOnLiferayFaces(String importPackageHeader,
-		String dynamicImportPackageHeader, String packageSuffix) {
-		return !isEmpty(dynamicImportPackageHeader) &&
-
-			// Ensure that the Liferay Faces bundle's packages aren't statically imported.
-			!bundleImportsPackage(importPackageHeader, "com.liferay.faces." + packageSuffix) &&
-			(bundleImportsPackage(dynamicImportPackageHeader, "*") ||
-				bundleImportsPackage(dynamicImportPackageHeader, "com.*") ||
-				bundleImportsPackage(dynamicImportPackageHeader, "com.liferay.*") ||
-				bundleImportsPackage(dynamicImportPackageHeader, "com.liferay.faces.*"));
-	}
-
-	/**
-	 * Returns true if a Mojarra package is imported dynamically by an overly broad <code>DynamicImport-Package</code>
-	 * header value (such as <code>*</code>, <code>javax.*</code>, <code>com.*</code>, or <code>com.sun.*</code>) and
-	 * <strong>zero</strong> Mojarra packages are imported statically.
-	 */
-	private static boolean bundleDynamicallyDependsOnMojarra(String importPackageHeader,
-		String dynamicImportPackageHeader) {
-		return !isEmpty(dynamicImportPackageHeader) &&
-
-			// Ensure that Mojarra's packages aren't statically imported.
-			!(bundleImportsPackage(importPackageHeader, "javax.faces") ||
-				bundleImportsPackage(importPackageHeader, "com.sun.faces")) &&
-			(bundleImportsPackage(dynamicImportPackageHeader, "*") ||
-				bundleImportsPackage(dynamicImportPackageHeader, "javax.*") ||
-				bundleImportsPackage(dynamicImportPackageHeader, "com.*") ||
-				bundleImportsPackage(dynamicImportPackageHeader, "com.sun.*"));
-	}
-
-	/**
-	 * Returns true if a PrimeFaces package is imported dynamically by an overly broad <code>
-	 * DynamicImport-Package</code> header value (such as <code>*</code> or <code>org.*</code>) and <strong>
-	 * zero</strong> Mojarra packages are imported statically.
-	 */
-	private static boolean bundleDynamicallyDependsOnPrimeFaces(String importPackageHeader,
-		String dynamicImportPackageHeader) {
-
-		return !isEmpty(dynamicImportPackageHeader) &&
-
-			// Ensure that PrimeFaces's packages aren't statically imported.
-			!bundleImportsPackage(importPackageHeader, "org.primefaces") &&
-			(bundleImportsPackage(dynamicImportPackageHeader, "*") ||
-				bundleImportsPackage(dynamicImportPackageHeader, "org.*"));
-	}
-
-	/**
-	 * Returns true if the package pattern is represented in the <code>DynamicImport-Package</code> header.
-	 */
-	private static boolean bundleImportsPackage(String importPackageHeader, String packagePattern) {
-
-		return importPackageHeader.contains(packagePattern) &&
-			(importPackageHeader.startsWith(packagePattern) ||
-				importPackageHeader.contains("," + packagePattern) ||
-				importPackageHeader.contains(" " + packagePattern) ||
-				importPackageHeader.contains("\t" + packagePattern) ||
-				importPackageHeader.contains("\n" + packagePattern));
 	}
 
 	private static Map<Long, Bundle> getBridgeImplBundles(Bundle bridgeAPIBundle) {
@@ -370,8 +264,23 @@ public final class FacesBundleUtil {
 		return isWab(bundle);
 	}
 
-	private static boolean isEmpty(String string) {
-		return ((string == null) || string.equals(""));
+	private static boolean isDynamicDependency(BundleWire bundleWire) {
+
+		boolean dynamicDependency = false;
+		BundleRequirement requirement = bundleWire.getRequirement();
+
+		if (requirement != null) {
+
+			Map<String, String> directives = requirement.getDirectives();
+			String resolution = directives.get("resolution");
+			dynamicDependency = "dynamic".equalsIgnoreCase(resolution);
+		}
+
+		return dynamicDependency;
+	}
+
+	private static boolean isFacesLibraryBundle(Long key) {
+		return key < 0;
 	}
 
 	private static boolean isLiferayFacesBundle(String symbolicName, String bundleSymbolicNameSuffix) {
