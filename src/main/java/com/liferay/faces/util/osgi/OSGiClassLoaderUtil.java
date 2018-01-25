@@ -369,11 +369,38 @@ public final class OSGiClassLoaderUtil {
 
 				if (clazz == null) {
 
-					Collection<Bundle> bundles = facesBundles.values();
+					Set<Map.Entry<Long, Bundle>> entrySet = facesBundles.entrySet();
 
-					for (Bundle bundle : bundles) {
+					for (Map.Entry<Long, Bundle> entry : entrySet) {
 
-						if (!isClassFileInBundle(className, bundle)) {
+						Long key = entry.getKey();
+						boolean bundleIsCurrentFacesWab = FacesBundleUtil.CURRENT_WAB_KEY.equals(key);
+						Bundle bundle = entry.getValue();
+						String classFilePath = "/" + className.replace(".", "/") + ".class";
+
+						// If the current bundle is the current Faces WAB and the Faces WAB cannot access the class
+						// file, then move on to the next bundle.
+						if (bundleIsCurrentFacesWab && !isClassLoadableByCurrentFacesWab(classFilePath, bundle)) {
+							continue;
+						}
+
+						// Otherwise, if the current bundle is not the current Faces WAB and the class file is not
+						// inside the bundle, move on to the next bundle. Instead of searching the entire class path of
+						// the bundle (like above with the current Faces WAB), only search the inside of the bundle for
+						// the file. If a bundle uses an overly-broad DynamicImport-Package header, unnecessary and even
+						// erroneous classes can be loaded by that bundle. For example, some Liferay bundles use headers
+						// like "DynamicImport-Package:com.liferay.*" which will allow that bundle to load
+						// "com.liferay.portal.*" packages thus causing Liferay Faces Portal to be detected for Faces
+						// WABs which do not actually rely on Liferay Faces Portal. This can cause portlets such as the
+						// JSF Showcase portlet to detect Liferay Faces Portal, Liferay Faces Alloy, and Liferay Faces
+						// Clay unnecessarily, which causes bugs in the JSF Showcase. Similarly, it's possible (though
+						// unlikely) that PrimeFaces classes could be accessible to a bundle (if the bundle uses an
+						// extremely broad header like "DynamicImport-Package:org.*") and if the classes are allowed to
+						// be loaded, they could completely change the h:head renderer and add unnecessary front-end
+						// resources to every page causing performance issues and other bugs. Therefore it is necesary
+						// to ensure that for every bundle that is not the current Faces WAB, only classes that are
+						// actually contained within the bundle are loaded by that bundle.
+						else if (!bundleIsCurrentFacesWab && !isClassFileInBundle(classFilePath, bundle)) {
 							continue;
 						}
 
@@ -411,12 +438,18 @@ public final class OSGiClassLoaderUtil {
 		return classLoader;
 	}
 
-	private static boolean isClassFileInBundle(String className, Bundle bundle) {
+	private static boolean isClassFileInBundle(String classFilePath, Bundle bundle) {
 
-		String classFilePath = "/" + className.replace(".", "/") + ".class";
-
-		// Use bundle.getEntry() to ensure that only the bundle is searched (and not the entire classpath).
+		// Use bundle.getEntry() to ensure that only the bundle is searched (and not the entire classpath which may
+		// include classes/resources from other bundles).
 		URL classFileURL = bundle.getEntry(classFilePath);
+
+		return classFileURL != null;
+	}
+
+	private static boolean isClassLoadableByCurrentFacesWab(String classFilePath, Bundle currentFacesWab) {
+
+		URL classFileURL = currentFacesWab.getResource(classFilePath);
 
 		return classFileURL != null;
 	}

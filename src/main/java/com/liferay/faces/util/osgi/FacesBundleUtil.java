@@ -43,16 +43,17 @@ import com.liferay.faces.util.osgi.internal.InternalFacesBundleUtil;
 public final class FacesBundleUtil {
 
 	// Package-Private Constants
-	/* package-private */ static final long CURRENT_WAB_KEY = Long.MIN_VALUE;
-	/* package-private */ static final long MOJARRA_KEY = CURRENT_WAB_KEY + 1;
-	/* package-private */ static final long LIFERAY_FACES_UTIL_KEY = MOJARRA_KEY + 1;
-	/* package-private */ static final long PRIMEFACES_KEY = LIFERAY_FACES_UTIL_KEY + 1;
-	/* package-private */ static final long LIFERAY_FACES_BRIDGE_API_KEY = PRIMEFACES_KEY + 1;
-	/* package-private */ static final long LIFERAY_FACES_BRIDGE_IMPL_KEY = LIFERAY_FACES_BRIDGE_API_KEY + 1;
-	/* package-private */ static final long LIFERAY_FACES_BRIDGE_EXT_KEY = LIFERAY_FACES_BRIDGE_IMPL_KEY + 1;
-	/* package-private */ static final long LIFERAY_FACES_CLAY_KEY = LIFERAY_FACES_BRIDGE_EXT_KEY + 1;
-	/* package-private */ static final long LIFERAY_FACES_PORTAL_KEY = LIFERAY_FACES_CLAY_KEY + 1;
-	/* package-private */ static final long LIFERAY_FACES_ALLOY_KEY = LIFERAY_FACES_PORTAL_KEY + 1;
+	/* package-private */ static final Long CURRENT_WAB_KEY = Long.MIN_VALUE;
+	/* package-private */ static final Long MOJARRA_KEY = CURRENT_WAB_KEY + 1;
+	/* package-private */ static final Long LIFERAY_FACES_UTIL_KEY = MOJARRA_KEY + 1;
+	/* package-private */ static final Long PRIMEFACES_KEY = LIFERAY_FACES_UTIL_KEY + 1;
+	/* package-private */ static final Long LIFERAY_FACES_BRIDGE_API_KEY = PRIMEFACES_KEY + 1;
+	/* package-private */ static final Long LIFERAY_FACES_BRIDGE_IMPL_KEY = LIFERAY_FACES_BRIDGE_API_KEY + 1;
+	/* package-private */ static final Long LIFERAY_FACES_BRIDGE_EXT_KEY = LIFERAY_FACES_BRIDGE_IMPL_KEY + 1;
+	/* package-private */ static final Long LIFERAY_FACES_CLAY_KEY = LIFERAY_FACES_BRIDGE_EXT_KEY + 1;
+	/* package-private */ static final Long LIFERAY_FACES_PORTAL_KEY = LIFERAY_FACES_CLAY_KEY + 1;
+	/* package-private */ static final Long LIFERAY_FACES_ALLOY_KEY = LIFERAY_FACES_PORTAL_KEY + 1;
+	/* package-private */ static final Long OSGI_FRAMEWORK_BUNDLE = 0L;
 
 	private FacesBundleUtil() {
 		throw new AssertionError();
@@ -137,78 +138,78 @@ public final class FacesBundleUtil {
 
 					BundleRevision provider = bundleWire.getProvider();
 
-					if (provider != null) {
+					if (provider == null) {
+						continue;
+					}
 
-						Bundle providerBundle = provider.getBundle();
-						long key = providerBundle.getBundleId();
+					Bundle providerBundle = provider.getBundle();
+					Long key = providerBundle.getBundleId();
 
-						if (key != 0) {
+					if (OSGI_FRAMEWORK_BUNDLE.equals(key)) {
+						continue;
+					}
 
-							String symbolicName = providerBundle.getSymbolicName();
+					String symbolicName = providerBundle.getSymbolicName();
 
-							if (symbolicName.equals(InternalFacesBundleUtil.MOJARRA_SYMBOLIC_NAME)) {
-								key = MOJARRA_KEY;
-							}
-							else if (isLiferayFacesBundle(symbolicName, "util")) {
-								key = LIFERAY_FACES_UTIL_KEY;
-							}
-							else if (symbolicName.equals(InternalFacesBundleUtil.PRIMEFACES_SYMBOLIC_NAME)) {
-								key = PRIMEFACES_KEY;
-							}
-							else if (isBridgeBundle(symbolicName, "api")) {
-								key = LIFERAY_FACES_BRIDGE_API_KEY;
-							}
-							else if (isBridgeBundle(symbolicName, "impl")) {
-								key = LIFERAY_FACES_BRIDGE_IMPL_KEY;
-							}
-							else if (isBridgeBundle(symbolicName, "ext")) {
-								key = LIFERAY_FACES_BRIDGE_EXT_KEY;
-							}
-							else if (isLiferayFacesBundle(symbolicName, "clay")) {
-								key = LIFERAY_FACES_CLAY_KEY;
-							}
-							else if (isLiferayFacesBundle(symbolicName, "portal")) {
-								key = LIFERAY_FACES_PORTAL_KEY;
-							}
-							else if (isLiferayFacesBundle(symbolicName, "alloy")) {
-								key = LIFERAY_FACES_ALLOY_KEY;
-							}
+					if (symbolicName.equals(InternalFacesBundleUtil.MOJARRA_SYMBOLIC_NAME)) {
+						key = MOJARRA_KEY;
+					}
+					else if (isLiferayFacesBundle(symbolicName, "util")) {
+						key = LIFERAY_FACES_UTIL_KEY;
+					}
+					else if (symbolicName.equals(InternalFacesBundleUtil.PRIMEFACES_SYMBOLIC_NAME)) {
+						key = PRIMEFACES_KEY;
+					}
+					else if (isBridgeBundle(symbolicName, "api")) {
+						key = LIFERAY_FACES_BRIDGE_API_KEY;
+					}
+					else if (isBridgeBundle(symbolicName, "impl")) {
+						key = LIFERAY_FACES_BRIDGE_IMPL_KEY;
+					}
+					else if (isBridgeBundle(symbolicName, "ext")) {
+						key = LIFERAY_FACES_BRIDGE_EXT_KEY;
+					}
+					else if (isLiferayFacesBundle(symbolicName, "clay")) {
+						key = LIFERAY_FACES_CLAY_KEY;
+					}
+					else if (isLiferayFacesBundle(symbolicName, "portal")) {
+						key = LIFERAY_FACES_PORTAL_KEY;
+					}
+					else if (isLiferayFacesBundle(symbolicName, "alloy")) {
+						key = LIFERAY_FACES_ALLOY_KEY;
+					}
 
-							// If the provider bundle is Mojarra, PrimeFaces, or a Liferay Faces bundle and it was
-							// obtained dynamically, skip it. If a bundle uses an overly-broad DynamicImport-Package
-							// header, unnecessary and even erroneous bundles can be included in the list of Faces
-							// bundles. For example, some Liferay bundls use headers like
-							// "DynamicImport-Package:com.liferay.*" which will cause portlets such as the JSF Showcase
-							// portlet to include Liferay Faces Portal, Liferay Faces Alloy, and Liferay Faces Clay
-							// unnecessarily, which causes bugs in the JSF Showcase. Similarly, if PrimeFaces is added
-							// to the list of Faces bundles for a portlet which does not expect it, it can completely
-							// change the h:head renderer and add unnecessary front-end resources to every page causing
-							// performance issues and other bugs.
-							if (isFacesLibraryBundle(key) && isDynamicDependency(bundleWire)) {
-								continue;
-							}
+					// If the provider bundle is Mojarra, PrimeFaces, or a Liferay Faces bundle and it was
+					// obtained dynamically, skip it. If a bundle uses an overly-broad DynamicImport-Package
+					// header, unnecessary and even erroneous bundles can be included in the list of Faces
+					// bundles. For example, some Liferay bundles use headers like
+					// "DynamicImport-Package:com.liferay.*" which will cause portlets such as the JSF Showcase
+					// portlet to include Liferay Faces Portal, Liferay Faces Alloy, and Liferay Faces Clay
+					// unnecessarily, which causes bugs in the JSF Showcase. Similarly, if PrimeFaces is added
+					// to the list of Faces bundles for a portlet which does not expect it, it can completely
+					// change the h:head renderer and add unnecessary front-end resources to every page causing
+					// performance issues and other bugs.
+					if (facesBundles.containsKey(key) ||
+							(isFacesLibraryBundle(key) && isDynamicDependency(bundleWire))) {
+						continue;
+					}
 
-							if (!facesBundles.containsValue(providerBundle)) {
+					facesBundles.put(key, providerBundle);
 
-								facesBundles.put(key, providerBundle);
+					if (LIFERAY_FACES_BRIDGE_API_KEY.equals(key)) {
 
-								if (key == LIFERAY_FACES_BRIDGE_API_KEY) {
+						Map<Long, Bundle> bridgeImplBundles = getBridgeImplBundles(providerBundle);
+						Set<Long> bridgeImplBundleKeys = bridgeImplBundles.keySet();
 
-									Map<Long, Bundle> bridgeImplBundles = getBridgeImplBundles(providerBundle);
-									Set<Long> bridgeImplBundleKeys = bridgeImplBundles.keySet();
+						for (Long bridgeImplBundleKey : bridgeImplBundleKeys) {
 
-									for (Long bridgeImplBundleKey : bridgeImplBundleKeys) {
-
-										Bundle bridgeImplBundle = bridgeImplBundles.get(bridgeImplBundleKey);
-										facesBundles.put(bridgeImplBundleKey, bridgeImplBundle);
-										addRequiredBundlesRecurse(facesBundles, bridgeImplBundle);
-									}
-								}
-
-								addRequiredBundlesRecurse(facesBundles, providerBundle);
-							}
+							Bundle bridgeImplBundle = bridgeImplBundles.get(bridgeImplBundleKey);
+							facesBundles.put(bridgeImplBundleKey, bridgeImplBundle);
+							addRequiredBundlesRecurse(facesBundles, bridgeImplBundle);
 						}
 					}
+
+					addRequiredBundlesRecurse(facesBundles, providerBundle);
 				}
 			}
 		}
