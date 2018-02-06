@@ -19,8 +19,7 @@ import javax.faces.context.ExternalContext;
 
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
-import com.liferay.faces.util.osgi.FacesBundleUtil;
-import com.liferay.faces.util.osgi.internal.InternalFacesBundleUtil;
+import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
 import com.liferay.faces.util.product.Product;
 import com.liferay.faces.util.product.ProductFactory;
 
@@ -47,7 +46,7 @@ public class UtilDependencyVerifier {
 				implementationVersion, JSF_MAJOR_VERSION, JSF_MINOR_VERSION);
 		}
 
-		if (FacesBundleUtil.isCurrentWarThinWab() && !InternalFacesBundleUtil.LIFERAY_FACES_OSGI_WEAVER_DETECTED) {
+		if (FacesBundleUtil.isCurrentWarThinWab() && !FacesBundleUtil.LIFERAY_FACES_OSGI_WEAVER_DETECTED) {
 			logger.error(
 				"{0} {1} requires the Liferay Faces OSGi Weaver to be started before its classes are loaded in an OSGi environment. Catastrophic class loading errors may occur.",
 				implementationTitle, implementationVersion);

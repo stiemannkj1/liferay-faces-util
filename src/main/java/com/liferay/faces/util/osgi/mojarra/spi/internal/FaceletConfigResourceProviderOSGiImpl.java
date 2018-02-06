@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,15 @@
 package com.liferay.faces.util.osgi.mojarra.spi.internal;
 
 import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 
-import com.liferay.faces.util.osgi.internal.OSGiResourceProviderUtil;
+import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
+import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerResourceProviderOSGiImpl;
+import com.liferay.faces.util.resource.internal.ResourceProviderUtil;
 
 import com.sun.faces.spi.ConfigurationResourceProvider;
 import com.sun.faces.spi.FaceletConfigResourceProvider;
@@ -36,11 +40,16 @@ public class FaceletConfigResourceProviderOSGiImpl implements ConfigurationResou
 	FaceletConfigResourceProvider {
 
 	/**
-	 * Returns the list of resources matching the "*.taglib.xml" wildcard found within the OSGi bundle. For more
-	 * information, see {@link com.sun.faces.spi.ConfigurationResourceProvider#getResources(ServletContext)}.
+	 * Returns the list of *.taglib.xml resources found in Faces OSGi bundles. For more information, see {@link
+	 * com.sun.faces.spi.ConfigurationResourceProvider#getResources(ServletContext)}.
 	 */
 	@Override
 	public Collection<URI> getResources(ServletContext servletContext) {
-		return OSGiResourceProviderUtil.getResourcesAsURIs("/META-INF/", "*.taglib.xml", servletContext);
+
+		FacesBundlesHandlerBase<List<URL>> facesBundlesHandler = new FacesBundlesHandlerResourceProviderOSGiImpl(
+				ResourceProviderUtil.META_INF_PATH, "*.taglib.xml");
+		List<URL> resourceURLs = facesBundlesHandler.handleFacesBundles(servletContext);
+
+		return ResourceProviderUtil.getResourcesAsURIs(resourceURLs);
 	}
 }

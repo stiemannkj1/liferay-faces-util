@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@ package com.liferay.faces.util.osgi;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,12 @@ import javax.servlet.ServletContext;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.wiring.BundleWiring;
+
+import com.liferay.faces.util.logging.Logger;
+import com.liferay.faces.util.logging.LoggerFactory;
+import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
+import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
+import com.liferay.faces.util.resource.internal.ResourceProviderUtil;
 
 
 /**
@@ -43,6 +50,9 @@ import org.osgi.framework.wiring.BundleWiring;
  * @author  Kyle Stiemann
  */
 public final class OSGiClassLoaderUtil {
+
+	// logger
+	private static final Logger logger = LoggerFactory.getLogger(ResourceProviderUtil.class);
 
 	private OSGiClassLoaderUtil() {
 		throw new AssertionError();
@@ -107,10 +117,10 @@ public final class OSGiClassLoaderUtil {
 
 	/**
 	 * This method is intended to replace {@link Class#forName(java.lang.String, boolean, java.lang.ClassLoader)} in an
-	 * OSGi environment. This method attempts to load the named class by iterating over the list of OSGi bundles
-	 * returned by {@link FacesBundleUtil#getFacesBundles(java.lang.Object)} and checking if the bundle's ClassLoader
-	 * can load the class (using {@link Class#forName(java.lang.String, boolean, java.lang.ClassLoader)}). If the class
-	 * cannot be loaded by any bundle, the suggested ClassLoader is used in a final attempt to load the class.
+	 * OSGi environment. This method attempts to load the named class by iterating over the list of OSGi bundles that
+	 * the current Faces WAB depends on and checking if the bundle's ClassLoader can load the class (using {@link
+	 * Class#forName(java.lang.String, boolean, java.lang.ClassLoader)}). If the class cannot be loaded by any bundle,
+	 * the suggested ClassLoader is used in a final attempt to load the class.
 	 *
 	 * @param   className             The name of the class to be obtained. For more information, see {@link
 	 *                                Class#forName(java.lang.String, boolean, java.lang.ClassLoader)}.
@@ -138,26 +148,19 @@ public final class OSGiClassLoaderUtil {
 		return getClass(className, initialize, facesContext, suggestedClassLoader);
 	}
 
+	/**
+	 * TODO
+	 *
+	 * @param   name
+	 * @param   facesContext
+	 * @param   suggestedClassLoader
+	 *
+	 * @return
+	 */
 	public static URL getResource(String name, FacesContext facesContext, ClassLoader suggestedClassLoader) {
 
-		URL resourceURL = null;
-
-		if (FacesBundleUtil.isCurrentWarThinWab() && (facesContext != null)) {
-
-			Collection<Bundle> facesBundles = FacesBundleUtil.getFacesBundles(facesContext);
-
-			if (!facesBundles.isEmpty()) {
-
-				for (Bundle facesBundle : facesBundles) {
-
-					resourceURL = facesBundle.getResource(name);
-
-					if (resourceURL != null) {
-						break;
-					}
-				}
-			}
-		}
+		FacesBundlesHandlerBase<URL> facesBundlesHandler = new FacesBundlesHandlerGetResourceImpl(name);
+		URL resourceURL = facesBundlesHandler.handleFacesBundles(facesContext);
 
 		if (resourceURL == null) {
 			resourceURL = suggestedClassLoader.getResource(name);
@@ -166,78 +169,59 @@ public final class OSGiClassLoaderUtil {
 		return resourceURL;
 	}
 
+	/**
+	 * TODO
+	 *
+	 * @param   name
+	 * @param   facesContext
+	 * @param   suggestedClassLoader
+	 *
+	 * @return
+	 */
 	public static InputStream getResourceAsStream(String name, FacesContext facesContext,
 		ClassLoader suggestedClassLoader) {
 
 		InputStream inputStream = null;
+		URL resource = getResource(name, facesContext, suggestedClassLoader);
 
-		if (FacesBundleUtil.isCurrentWarThinWab() && (facesContext != null)) {
-
-			Collection<Bundle> facesBundles = FacesBundleUtil.getFacesBundles(facesContext);
-
-			if (!facesBundles.isEmpty()) {
-
-				for (Bundle facesBundle : facesBundles) {
-
-					ClassLoader classLoader = getFacesBundleWiringClassLoader(facesBundle);
-
-					if (classLoader == null) {
-						continue;
-					}
-
-					inputStream = classLoader.getResourceAsStream(name);
-
-					if (inputStream != null) {
-						break;
-					}
-				}
-			}
+		try {
+			inputStream = resource.openStream();
 		}
-
-		if (inputStream == null) {
-			inputStream = suggestedClassLoader.getResourceAsStream(name);
+		catch (IOException e) {
+			// Do nothing.
 		}
 
 		return inputStream;
 	}
 
+	/**
+	 * TODO
+	 *
+	 * @param   name
+	 * @param   facesContext
+	 * @param   suggestedClassLoader
+	 *
+	 * @return
+	 *
+	 * @throws  IOException
+	 */
 	public static Enumeration<URL> getResources(String name, FacesContext facesContext,
 		ClassLoader suggestedClassLoader) throws IOException {
 
-		Set<URL> resourceURLs = new HashSet<URL>();
-
-		if (FacesBundleUtil.isCurrentWarThinWab() && (facesContext != null)) {
-
-			Collection<Bundle> facesBundles = FacesBundleUtil.getFacesBundles(facesContext);
-
-			if (!facesBundles.isEmpty()) {
-
-				for (Bundle facesBundle : facesBundles) {
-
-					try {
-
-						Enumeration<URL> facesBundleResourceURLs = facesBundle.getResources(name);
-						addAllEnumerationElementsToSet(facesBundleResourceURLs, resourceURLs);
-					}
-					catch (IOException e) {
-						// Do nothing.
-					}
-				}
-			}
-		}
-
-		Enumeration<URL> suggestedResourceURLs = suggestedClassLoader.getResources(name);
-		addAllEnumerationElementsToSet(suggestedResourceURLs, resourceURLs);
+		FacesBundlesHandlerGetResourcesImpl facesBundlesHandlerGetResourcesImpl =
+			new FacesBundlesHandlerGetResourcesImpl(name);
+		List<URL> resourceURLs = facesBundlesHandlerGetResourcesImpl.getResourcesFromFacesBundles(facesContext,
+				suggestedClassLoader);
 
 		return Collections.enumeration(resourceURLs);
 	}
 
 	/**
 	 * This method is intended to replace {@link ClassLoader#loadClass(java.lang.String)} in an OSGi environment. This
-	 * method attempts to load the named class by iterating over the list of OSGi bundles returned by {@link
-	 * FacesBundleUtil#getFacesBundles(java.lang.Object)} and checking if the bundle's ClassLoader can load the class
-	 * (using {@link ClassLoader#loadClass(java.lang.String)}). If the class cannot be loaded by any bundle, the
-	 * suggested ClassLoader is used in a final attempt to load the class.
+	 * method attempts to load the named class by iterating over the list of OSGi bundles that the current Faces WAB
+	 * depends on and checking if the bundle's ClassLoader can load the class (using {@link
+	 * ClassLoader#loadClass(java.lang.String)}). If the class cannot be loaded by any bundle, the suggested ClassLoader
+	 * is used in a final attempt to load the class.
 	 *
 	 * @param   className             The name of the class to be obtained. For more information, see {@link
 	 *                                ClassLoader#loadClass(java.lang.String)}.
@@ -256,15 +240,6 @@ public final class OSGiClassLoaderUtil {
 	public static Class<?> loadClass(String className, FacesContext facesContext, ClassLoader suggestedClassLoader)
 		throws ClassNotFoundException {
 		return getClass(className, null, facesContext, suggestedClassLoader);
-	}
-
-	private static void addAllEnumerationElementsToSet(Enumeration<URL> urlsToAdd, Set<URL> urls) {
-
-		if (urlsToAdd != null) {
-
-			List<URL> facesBundleResourceURLs = Collections.list(urlsToAdd);
-			urls.addAll(facesBundleResourceURLs);
-		}
 	}
 
 	private static Class<?> getClass(String name, Boolean initialize, Bundle bundle) {
@@ -307,7 +282,7 @@ public final class OSGiClassLoaderUtil {
 
 		if (FacesBundleUtil.isCurrentWarThinWab() && (context != null)) {
 
-			Map<Long, Bundle> facesBundles = FacesBundleUtil.getFacesBundlesUsingServletContext(context);
+			Map<Long, Bundle> facesBundles = FacesBundleUtil.getFacesBundles(context);
 
 			if (!facesBundles.isEmpty()) {
 
@@ -369,47 +344,13 @@ public final class OSGiClassLoaderUtil {
 
 				if (clazz == null) {
 
-					Set<Map.Entry<Long, Bundle>> entrySet = facesBundles.entrySet();
-
-					for (Map.Entry<Long, Bundle> entry : entrySet) {
-
-						Long key = entry.getKey();
-						boolean bundleIsCurrentFacesWab = FacesBundleUtil.CURRENT_WAB_KEY.equals(key);
-						Bundle bundle = entry.getValue();
-						String classFilePath = "/" + className.replace(".", "/") + ".class";
-
-						// If the current bundle is the current Faces WAB and the Faces WAB cannot access the class
-						// file, then move on to the next bundle.
-						if (bundleIsCurrentFacesWab && !isClassLoadableByCurrentFacesWab(classFilePath, bundle)) {
-							continue;
-						}
-
-						// Otherwise, if the current bundle is not the current Faces WAB and the class file is not
-						// inside the bundle, move on to the next bundle. Instead of searching the entire class path of
-						// the bundle (like above with the current Faces WAB), only search the inside of the bundle for
-						// the file. If a bundle uses an overly-broad DynamicImport-Package header, unnecessary and even
-						// erroneous classes can be loaded by that bundle. For example, some Liferay bundles use headers
-						// like "DynamicImport-Package:com.liferay.*" which will allow that bundle to load
-						// "com.liferay.portal.*" packages thus causing Liferay Faces Portal to be detected for Faces
-						// WABs which do not actually rely on Liferay Faces Portal. This can cause portlets such as the
-						// JSF Showcase portlet to detect Liferay Faces Portal, Liferay Faces Alloy, and Liferay Faces
-						// Clay unnecessarily, which causes bugs in the JSF Showcase. Similarly, it's possible (though
-						// unlikely) that PrimeFaces classes could be accessible to a bundle (if the bundle uses an
-						// extremely broad header like "DynamicImport-Package:org.*") and if the classes are allowed to
-						// be loaded, they could completely change the h:head renderer and add unnecessary front-end
-						// resources to every page causing performance issues and other bugs. Therefore it is necesary
-						// to ensure that for every bundle that is not the current Faces WAB, only classes that are
-						// actually contained within the bundle are loaded by that bundle.
-						else if (!bundleIsCurrentFacesWab && !isClassFileInBundle(classFilePath, bundle)) {
-							continue;
-						}
-
-						clazz = getClass(className, initialize, bundle);
-
-						if (clazz != null) {
-							break;
-						}
-					}
+					FacesBundlesHandlerBase<Class<?>> facesBundlesHandler = new FacesBundlesHandlerGetClassImpl(
+							className, initialize);
+					clazz = facesBundlesHandler.handleFacesBundles(context, FacesBundleUtil.MOJARRA_KEY,
+							FacesBundleUtil.LIFERAY_FACES_UTIL_KEY, FacesBundleUtil.PRIMEFACES_KEY,
+							FacesBundleUtil.LIFERAY_FACES_BRIDGE_API_KEY, FacesBundleUtil.LIFERAY_FACES_BRIDGE_EXT_KEY,
+							FacesBundleUtil.LIFERAY_FACES_BRIDGE_IMPL_KEY, FacesBundleUtil.LIFERAY_FACES_CLAY_KEY,
+							FacesBundleUtil.LIFERAY_FACES_PORTAL_KEY, FacesBundleUtil.LIFERAY_FACES_ALLOY_KEY);
 				}
 			}
 		}
@@ -438,19 +379,214 @@ public final class OSGiClassLoaderUtil {
 		return classLoader;
 	}
 
-	private static boolean isClassFileInBundle(String classFilePath, Bundle bundle) {
+	private static final class FacesBundlesHandlerGetClassImpl extends FacesBundlesHandlerBase<Class<?>> {
 
-		// Use bundle.getEntry() to ensure that only the bundle is searched (and not the entire classpath which may
-		// include classes/resources from other bundles).
-		URL classFileURL = bundle.getEntry(classFilePath);
+		// Private Data Members
+		private final String className;
+		private final String classFilePath;
+		private final Boolean initialize;
 
-		return classFileURL != null;
+		public FacesBundlesHandlerGetClassImpl(String className, Boolean initialize) {
+			this.className = className;
+			this.classFilePath = "/" + className.replace(".", "/") + ".class";
+			this.initialize = initialize;
+		}
+
+		@Override
+		protected Class<?> getInitialReturnValueObject() {
+			return null;
+		}
+
+		@Override
+		protected void handleFacesBundle(Long bundleKey, Bundle bundle,
+			ReturnValueReference<Class<?>> returnValueReference) {
+
+			if (FacesBundleUtil.shouldLoadClassWithBundle(classFilePath, bundleKey, bundle)) {
+				returnValueReference.set(OSGiClassLoaderUtil.getClass(className, initialize, bundle));
+			}
+		}
+
+		@Override
+		protected boolean skipHandlingRemaingFacesBundles(ReturnValueReference<Class<?>> returnValueReference) {
+			return !returnValueReference.isEmpty();
+		}
 	}
 
-	private static boolean isClassLoadableByCurrentFacesWab(String classFilePath, Bundle currentFacesWab) {
+	private static final class FacesBundlesHandlerGetResourceImpl extends FacesBundlesHandlerBase<URL> {
 
-		URL classFileURL = currentFacesWab.getResource(classFilePath);
+		// Private Data Members
+		private final String name;
 
-		return classFileURL != null;
+		public FacesBundlesHandlerGetResourceImpl(String name) {
+			this.name = name;
+		}
+
+		@Override
+		protected URL getInitialReturnValueObject() {
+			return null;
+		}
+
+		@Override
+		protected void handleCurrentFacesWab(Long bundleKey, Bundle currentFacesWab,
+			ReturnValueReference<URL> returnValueReference) {
+			returnValueReference.set(currentFacesWab.getResource(name));
+		}
+
+		@Override
+		protected void handleFacesBundle(Long bundleKey, Bundle bundle,
+			ReturnValueReference<URL> returnValueReference) {
+			returnValueReference.set(bundle.getEntry(name));
+		}
+
+		@Override
+		protected boolean skipHandlingRemaingFacesBundles(ReturnValueReference<URL> returnValueReference) {
+			return !returnValueReference.isEmpty();
+		}
+	}
+
+	private static final class FacesBundlesHandlerGetResourcesImpl
+		extends FacesBundlesHandlerBase<List<FacesBundlesHandlerGetResourcesImpl.URLI>> {
+
+		// Private Final Data Members
+		private final String name;
+
+		public FacesBundlesHandlerGetResourcesImpl(String name) {
+			this.name = name;
+		}
+
+		public List<URL> getResourcesFromFacesBundles(FacesContext facesContext, ClassLoader suggestedClassLoader)
+			throws IOException {
+
+			List<URL> resourceURLs = new ArrayList<URL>();
+			List<URLI> urlis = handleFacesBundles(facesContext);
+			Enumeration<URL> resources = suggestedClassLoader.getResources(name);
+			URLI.addAllURLsToListOfURLI(resources, urlis);
+
+			for (URLI urli : urlis) {
+				resourceURLs.add(urli.getURL());
+			}
+
+			return Collections.unmodifiableList(resourceURLs);
+		}
+
+		@Override
+		protected List<URLI> getInitialReturnValueObject() {
+			return new ArrayList<URLI>();
+		}
+
+		@Override
+		protected void handleCurrentFacesWab(Long bundleKey, Bundle currentFacesWab,
+			ReturnValueReference<List<URLI>> returnValueReference) {
+			handleFacesBundle(bundleKey, currentFacesWab, returnValueReference);
+		}
+
+		@Override
+		protected void handleFacesBundle(Long bundleKey, Bundle bundle,
+			ReturnValueReference<List<URLI>> returnValueReference) {
+
+			Enumeration<URL> resources = null;
+
+			try {
+
+				// Ideally, a method like getEntries() would be called here instead in order to only search the inside
+				// of the bundle (getResourcesFromFacesBundles() searches the bundle's classpath which may include files
+				// outside of the bundle). However, getEntries() does not exist and getEntry() cannot be used because it
+				// will not find all the resources in a fat JAR or WAR (findEntries() also should not be used since it
+				// uses special patterns and there is no standards-based methods to escape the special characters).
+				resources = bundle.getResources(name);
+			}
+			catch (IOException e) {
+
+				long bundleId = bundle.getBundleId();
+				String symbolicName = bundle.getSymbolicName();
+				logger.error(
+					"Failed to obtain URLs of resources with path \"{0}\" from Faces WAB with bundle id \"{1}\" and symbolic name \"{2}\" due to the following error:",
+					name, bundleId, symbolicName);
+				logger.error(e);
+			}
+
+			List<URLI> urlis = returnValueReference.get();
+			URLI.addAllURLsToListOfURLI(resources, urlis);
+		}
+
+		/**
+		 * This class is designed to wrap a URL and provide the ability to check for equality without making network
+		 * requests. Unfortunately {@link URL#equals(java.lang.Object)} and {@link URL#hashCode()} may actually make
+		 * blocking network requests before returning. For more information see this StackOverflow Q&A:
+		 * https://stackoverflow.com/questions/18280818/what-java-library-can-i-use-to-compare-two-urls-for-equality.
+		 */
+		private static final class URLI {
+
+			// Private Final Data Members
+			private final URL url;
+			private final URI uri;
+
+			public URLI(URL url) {
+
+				this.url = url;
+
+				URI uri = null;
+
+				try {
+					uri = url.toURI();
+				}
+				catch (URISyntaxException e) {
+					// Do nothing.
+				}
+
+				this.uri = uri;
+			}
+
+			private static void addAllURLsToListOfURLI(Enumeration<URL> urls, List<URLI> urlis) {
+
+				while ((urls != null) && urls.hasMoreElements()) {
+
+					URL resource = urls.nextElement();
+					URLI urli = new URLI(resource);
+
+					if (!urlis.contains(urli)) {
+						urlis.add(urli);
+					}
+				}
+			}
+
+			@Override
+			public boolean equals(Object object) {
+
+				boolean equals = false;
+
+				if ((object != null) && (object instanceof URLI) && (this.uri != null)) {
+
+					URLI urli = (URLI) object;
+					URI uri = urli.getURI();
+					equals = this.uri.equals(uri);
+				}
+
+				return equals;
+			}
+
+			public URI getURI() {
+				return uri;
+			}
+
+			public URL getURL() {
+				return url;
+			}
+
+			@Override
+			public int hashCode() {
+
+				int hashCode;
+
+				if (uri != null) {
+					hashCode = uri.hashCode();
+				}
+				else {
+					hashCode = System.identityHashCode(uri);
+				}
+
+				return hashCode;
+			}
+		}
 	}
 }

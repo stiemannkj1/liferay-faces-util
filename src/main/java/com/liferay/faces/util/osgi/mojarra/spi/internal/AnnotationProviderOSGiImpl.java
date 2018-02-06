@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.liferay.faces.util.osgi.mojarra.spi.internal;
 
 import java.lang.annotation.Annotation;
 import java.net.URI;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,7 +40,8 @@ import org.osgi.framework.wiring.BundleWiring;
 
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
-import com.liferay.faces.util.osgi.FacesBundleUtil;
+import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
+import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
 
 import com.sun.faces.config.FacesInitializer;
 import com.sun.faces.spi.AnnotationProvider;
@@ -102,62 +102,86 @@ public class AnnotationProviderOSGiImpl extends AnnotationProvider {
 		// Annotation scanning works correctly in thick wabs and wars.
 		if (FacesBundleUtil.isCurrentWarThinWab()) {
 
-			Collection<Bundle> facesBundles = FacesBundleUtil.getFacesBundles(sc);
-			annotatedClasses = new HashMap<Class<? extends Annotation>, Set<Class<?>>>();
-
-			for (Class<?> annotation : ANNOTATIONS_HANDLED_BY_MOJARRA) {
-				annotatedClasses.put((Class<? extends Annotation>) annotation, new HashSet<Class<?>>());
-			}
-
-			for (Bundle bundle : facesBundles) {
-
-				BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-
-				if (bundleWiring == null) {
-					continue;
-				}
-
-				Collection<String> classFilePaths = bundleWiring.listResources("/", "*.class",
-						BundleWiring.LISTRESOURCES_RECURSE);
-
-				for (String classFilePath : classFilePaths) {
-
-					try {
-
-						URL classResource = bundle.getResource(classFilePath);
-
-						if (classResource == null) {
-							continue;
-						}
-
-						String className = classFilePath.replaceAll("\\.class$", "").replace("/", ".");
-						Class<?> clazz = bundle.loadClass(className);
-						Annotation[] classAnnotations = clazz.getAnnotations();
-
-						for (Annotation annotation : classAnnotations) {
-
-							Class<? extends Annotation> annotationType = annotation.annotationType();
-
-							if (ANNOTATIONS_HANDLED_BY_MOJARRA.contains(annotationType)) {
-								annotatedClasses.get(annotationType).add(clazz);
-							}
-						}
-					}
-					catch (ClassNotFoundException e) {
-						// no-op
-					}
-					catch (NoClassDefFoundError e) {
-						// no-op
-					}
-				}
-			}
-
-			annotatedClasses = Collections.unmodifiableMap(annotatedClasses);
+			FacesBundlesHandlerBase<Map<Class<? extends Annotation>, Set<Class<?>>>> facesBundlesHandler =
+				new FacesBundlesHandlerAnnotationProviderOSGiImpl();
+			annotatedClasses = Collections.unmodifiableMap(facesBundlesHandler.handleFacesBundles(sc));
 		}
 		else {
 			annotatedClasses = wrappedAnnotationProvider.getAnnotatedClasses(set);
 		}
 
 		return annotatedClasses;
+	}
+
+	private static final class FacesBundlesHandlerAnnotationProviderOSGiImpl
+		extends FacesBundlesHandlerBase<Map<Class<? extends Annotation>, Set<Class<?>>>> {
+
+		private static Class<?> loadBundleClass(Bundle bundle, String className) {
+
+			Class<?> clazz = null;
+
+			try {
+				clazz = bundle.loadClass(className);
+			}
+			catch (ClassNotFoundException e) {
+				// no-op
+			}
+			catch (NoClassDefFoundError e) {
+				// no-op
+			}
+
+			return clazz;
+		}
+
+		@Override
+		protected Map<Class<? extends Annotation>, Set<Class<?>>> getInitialReturnValueObject() {
+
+			Map<Class<? extends Annotation>, Set<Class<?>>> annotatedClasses =
+				new HashMap<Class<? extends Annotation>, Set<Class<?>>>();
+
+			for (Class<?> annotation : ANNOTATIONS_HANDLED_BY_MOJARRA) {
+				annotatedClasses.put((Class<? extends Annotation>) annotation, new HashSet<Class<?>>());
+			}
+
+			return annotatedClasses;
+		}
+
+		@Override
+		protected void handleFacesBundle(Long bundleKey, Bundle bundle,
+			ReturnValueReference<Map<Class<? extends Annotation>, Set<Class<?>>>> returnValueReference) {
+
+			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+
+			if (bundleWiring != null) {
+
+				Collection<String> classFilePaths = bundleWiring.listResources("/", "*.class",
+						BundleWiring.LISTRESOURCES_RECURSE);
+
+				for (String classFilePath : classFilePaths) {
+
+					if (!FacesBundleUtil.shouldLoadClassWithBundle(classFilePath, bundleKey, bundle)) {
+						continue;
+					}
+
+					String className = classFilePath.replaceAll("\\.class$", "").replace("/", ".");
+					Class<?> clazz = loadBundleClass(bundle, className);
+
+					if (clazz == null) {
+						continue;
+					}
+
+					Annotation[] classAnnotations = clazz.getAnnotations();
+
+					for (Annotation annotation : classAnnotations) {
+
+						Class<? extends Annotation> annotationType = annotation.annotationType();
+
+						if (ANNOTATIONS_HANDLED_BY_MOJARRA.contains(annotationType)) {
+							returnValueReference.get().get(annotationType).add(clazz);
+						}
+					}
+				}
+			}
+		}
 	}
 }

@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,10 +38,13 @@ import com.liferay.faces.util.config.WebConfig;
 import com.liferay.faces.util.internal.CloseableUtil;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
-import com.liferay.faces.util.osgi.FacesBundleUtil;
-import com.liferay.faces.util.osgi.internal.OSGiResourceProviderUtil;
+import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
+import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
+import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerResourceProviderOSGiImpl;
 import com.liferay.faces.util.product.Product;
 import com.liferay.faces.util.product.ProductFactory;
+import com.liferay.faces.util.product.internal.ProductMojarraImpl;
+import com.liferay.faces.util.resource.internal.ResourceProviderUtil;
 
 
 /**
@@ -54,12 +56,11 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 	private static final Logger logger = LoggerFactory.getLogger(FacesConfigScannerImpl.class);
 
 	// Private Constants
-	private static final String FACES_CONFIG_META_INF_PATH = "META-INF/faces-config.xml";
+	private static final String FACES_CONFIG_META_INF_PATH = ResourceProviderUtil.META_INF_PATH + "faces-config.xml";
 	private static final String FACES_CONFIG_WEB_INF_PATH = "/WEB-INF/faces-config.xml";
 	private static final String FACES_SERVLET = "Faces Servlet";
 	private static final String FACES_SERVLET_FQCN = FacesServlet.class.getName();
-	private static final String MOJARRA_CONFIG_PATH = "com/sun/faces/jsf-ri-runtime.xml";
-	private static final boolean MOJARRA_DETECTED = ProductFactory.getProduct(Product.Name.MOJARRA).isDetected();
+	private static final String MOJARRA_CONFIG_PATH = "/com/sun/faces/jsf-ri-runtime.xml";
 
 	// Private Data Members
 	private ClassLoader classLoader;
@@ -190,6 +191,8 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 				inputStream.close();
 			}
 
+			final boolean MOJARRA_DETECTED = new ProductMojarraImpl().isDetected();
+
 			if (MOJARRA_DETECTED && (mojarraConfigDescriptor == null)) {
 				logger.warn("{0} not found." + MOJARRA_CONFIG_PATH);
 			}
@@ -261,24 +264,9 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 
 		if (FacesBundleUtil.isCurrentWarThinWab()) {
 
-			Collection<Bundle> facesBundles = FacesBundleUtil.getFacesBundles(initFacesContext);
-
-			for (Bundle bundle : facesBundles) {
-
-				String symbolicName = bundle.getSymbolicName();
-
-				if ("org.glassfish.javax.faces".equals(symbolicName)) {
-
-					URL mojarraConfigURL = bundle.getResource(MOJARRA_CONFIG_PATH);
-
-					if (mojarraConfigURL != null) {
-						facesConfigURLs.add(mojarraConfigURL);
-					}
-				}
-
-				facesConfigURLs.addAll(OSGiResourceProviderUtil.getResources("/META-INF/", "*faces-config.xml",
-						bundle));
-			}
+			FacesBundlesHandlerBase<List<URL>> facesBundlesHandler = new FacesBundlesHandlerFacesConfigScannerImpl(
+					ResourceProviderUtil.META_INF_PATH, ResourceProviderUtil.ALL_FACES_CONFIG_PATTERN);
+			facesConfigURLs.addAll(facesBundlesHandler.handleFacesBundles(initFacesContext));
 		}
 		else {
 
@@ -288,7 +276,9 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 				facesConfigURLs.add(mojarraConfigURL);
 			}
 
-			facesConfigURLs.addAll(Collections.list(classLoader.getResources(FACES_CONFIG_META_INF_PATH)));
+			// TODO search for *.faces-config.xml files too.
+			ResourceProviderUtil.addAllEnumerationURLsToList(classLoader.getResources(FACES_CONFIG_META_INF_PATH),
+				facesConfigURLs);
 		}
 
 		ExternalContext externalContext = initFacesContext.getExternalContext();
@@ -299,5 +289,26 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 		}
 
 		return Collections.unmodifiableList(facesConfigURLs);
+	}
+
+	private static final class FacesBundlesHandlerFacesConfigScannerImpl
+		extends FacesBundlesHandlerResourceProviderOSGiImpl {
+
+		public FacesBundlesHandlerFacesConfigScannerImpl(String path, String facesBundleFilePattern) {
+			super(path, facesBundleFilePattern);
+		}
+
+		@Override
+		protected void handleFacesBundle(Long bundleKey, Bundle bundle,
+			ReturnValueReference<List<URL>> returnValueReference) {
+
+			if (FacesBundleUtil.MOJARRA_KEY.equals(bundleKey)) {
+
+				List<URL> resourceURLs = returnValueReference.get();
+				resourceURLs.add(bundle.getEntry(MOJARRA_CONFIG_PATH));
+			}
+
+			super.handleFacesBundle(bundleKey, bundle, returnValueReference);
+		}
 	}
 }
