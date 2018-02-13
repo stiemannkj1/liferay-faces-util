@@ -31,6 +31,7 @@ import com.liferay.faces.util.cache.CacheFactory;
 import com.liferay.faces.util.i18n.internal.UTF8Control;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
+import com.liferay.faces.util.osgi.internal.ResourceBundleControlOSGiFriendlyImpl;
 
 
 /**
@@ -47,6 +48,9 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(I18nBundleBase.class);
+
+	// Public Constants
+	public static final ResourceBundle.Control UTF8_CONTROL = new UTF8Control();
 
 	// Private Data Members
 	private I18n wrappedI18n;
@@ -117,10 +121,10 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 
 				if (locale == null) {
 					resourceBundle = ResourceBundle.getBundle(bundleKey, Locale.getDefault(), classLoader,
-							new UTF8Control());
+							UTF8_CONTROL);
 				}
 				else {
-					resourceBundle = ResourceBundle.getBundle(bundleKey, locale, classLoader, new UTF8Control());
+					resourceBundle = ResourceBundle.getBundle(bundleKey, locale, classLoader, UTF8_CONTROL);
 				}
 			}
 			catch (MissingResourceException e) {

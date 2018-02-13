@@ -18,7 +18,6 @@ package com.liferay.faces.util.osgi.internal;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -158,6 +157,22 @@ public final class FacesBundleUtil {
 		}
 
 		return facesBundles;
+	}
+
+	public static ClassLoader getFacesBundleWiringClassLoader(Bundle facesBundle) {
+
+		ClassLoader classLoader = null;
+
+		if (facesBundle != null) {
+
+			BundleWiring bundleWiring = facesBundle.adapt(BundleWiring.class);
+
+			if (bundleWiring != null) {
+				classLoader = bundleWiring.getClassLoader();
+			}
+		}
+
+		return classLoader;
 	}
 
 	public static boolean isCurrentWarThinWab() {

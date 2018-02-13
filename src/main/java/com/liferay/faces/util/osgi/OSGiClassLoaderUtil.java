@@ -24,19 +24,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.wiring.BundleWiring;
 
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
 import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
 import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
+import com.liferay.faces.util.osgi.internal.ResourceBundleControlOSGiFriendlyImpl;
 import com.liferay.faces.util.resource.internal.ResourceProviderUtil;
 
 
@@ -194,6 +195,33 @@ public final class OSGiClassLoaderUtil {
 		return inputStream;
 	}
 
+	public static ResourceBundle getResourceBundle(String baseName) {
+		return ResourceBundle.getBundle(baseName, new ResourceBundleControlOSGiFriendlyImpl(baseName));
+	}
+
+	public static ResourceBundle getResourceBundle(String baseName, Locale locale) {
+		return ResourceBundle.getBundle(baseName, locale, new ResourceBundleControlOSGiFriendlyImpl(baseName));
+	}
+
+	public static ResourceBundle getResourceBundle(String baseName, ResourceBundle.Control control) {
+		return ResourceBundle.getBundle(baseName, new ResourceBundleControlOSGiFriendlyImpl(control));
+	}
+
+	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ClassLoader classLoader) {
+		return ResourceBundle.getBundle(baseName, locale, classLoader,
+				new ResourceBundleControlOSGiFriendlyImpl(baseName));
+	}
+
+	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ResourceBundle.Control control) {
+		return ResourceBundle.getBundle(baseName, locale, new ResourceBundleControlOSGiFriendlyImpl(control));
+	}
+
+	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ClassLoader classLoader,
+		ResourceBundle.Control control) {
+		return ResourceBundle.getBundle(baseName, locale, classLoader,
+				new ResourceBundleControlOSGiFriendlyImpl(control));
+	}
+
 	/**
 	 * TODO
 	 *
@@ -244,7 +272,7 @@ public final class OSGiClassLoaderUtil {
 
 	private static Class<?> getClass(String name, Boolean initialize, Bundle bundle) {
 
-		ClassLoader classLoader = getFacesBundleWiringClassLoader(bundle);
+		ClassLoader classLoader = FacesBundleUtil.getFacesBundleWiringClassLoader(bundle);
 		Class<?> clazz = null;
 
 		if (classLoader != null) {
@@ -363,22 +391,6 @@ public final class OSGiClassLoaderUtil {
 		return clazz;
 	}
 
-	private static ClassLoader getFacesBundleWiringClassLoader(Bundle facesBundle) {
-
-		ClassLoader classLoader = null;
-
-		if (facesBundle != null) {
-
-			BundleWiring bundleWiring = facesBundle.adapt(BundleWiring.class);
-
-			if (bundleWiring != null) {
-				classLoader = bundleWiring.getClassLoader();
-			}
-		}
-
-		return classLoader;
-	}
-
 	private static final class FacesBundlesHandlerGetClassImpl extends FacesBundlesHandlerBase<Class<?>> {
 
 		// Private Data Members
@@ -460,7 +472,7 @@ public final class OSGiClassLoaderUtil {
 			List<URL> resourceURLs = new ArrayList<URL>();
 			List<URLI> urlis = handleFacesBundles(facesContext);
 			Enumeration<URL> resources = suggestedClassLoader.getResources(name);
-			URLI.addAllURLsToListOfURLI(resources, urlis);
+			URLI.addAllUniqueURLsToListOfURLI(resources, urlis);
 
 			for (URLI urli : urlis) {
 				resourceURLs.add(urli.getURL());
@@ -506,7 +518,7 @@ public final class OSGiClassLoaderUtil {
 			}
 
 			List<URLI> urlis = returnValueReference.get();
-			URLI.addAllURLsToListOfURLI(resources, urlis);
+			URLI.addAllUniqueURLsToListOfURLI(resources, urlis);
 		}
 
 		/**
@@ -537,7 +549,7 @@ public final class OSGiClassLoaderUtil {
 				this.uri = uri;
 			}
 
-			private static void addAllURLsToListOfURLI(Enumeration<URL> urls, List<URLI> urlis) {
+			private static void addAllUniqueURLsToListOfURLI(Enumeration<URL> urls, List<URLI> urlis) {
 
 				while ((urls != null) && urls.hasMoreElements()) {
 
