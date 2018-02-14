@@ -205,13 +205,13 @@ public final class OSGiClassLoaderUtil {
 	 */
 	public static ResourceBundle getResourceBundle(String baseName, Class<?> callingClass) {
 
-		ClassLoader classLoader = callingClass.getClassLoader();
+		ClassLoader fallbackClassLoader = callingClass.getClassLoader();
 
 		try {
-			return ResourceBundle.getBundle(baseName, Locale.getDefault(), classLoader);
+			return ResourceBundle.getBundle(baseName);
 		}
 		catch (MissingResourceException e) {
-			return ResourceBundle.getBundle(baseName);
+			return ResourceBundle.getBundle(baseName, Locale.getDefault(), fallbackClassLoader);
 		}
 	}
 
@@ -226,13 +226,13 @@ public final class OSGiClassLoaderUtil {
 	 */
 	public static ResourceBundle getResourceBundle(String baseName, Locale locale, Class<?> callingClass) {
 
-		ClassLoader classLoader = callingClass.getClassLoader();
+		ClassLoader fallbackClassLoader = callingClass.getClassLoader();
 
 		try {
-			return ResourceBundle.getBundle(baseName, locale, classLoader);
+			return ResourceBundle.getBundle(baseName, locale);
 		}
 		catch (MissingResourceException e) {
-			return ResourceBundle.getBundle(baseName, locale);
+			return ResourceBundle.getBundle(baseName, locale, fallbackClassLoader);
 		}
 	}
 
@@ -248,13 +248,13 @@ public final class OSGiClassLoaderUtil {
 	public static ResourceBundle getResourceBundle(String baseName, ResourceBundle.Control control,
 		Class<?> callingClass) {
 
-		ClassLoader classLoader = callingClass.getClassLoader();
+		ClassLoader fallbackClassLoader = callingClass.getClassLoader();
 
 		try {
-			return ResourceBundle.getBundle(baseName, Locale.getDefault(), classLoader, control);
+			return ResourceBundle.getBundle(baseName, control);
 		}
 		catch (MissingResourceException e) {
-			return ResourceBundle.getBundle(baseName, control);
+			return ResourceBundle.getBundle(baseName, Locale.getDefault(), fallbackClassLoader, control);
 		}
 	}
 
@@ -268,16 +268,16 @@ public final class OSGiClassLoaderUtil {
 	 *
 	 * @return
 	 */
-	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ClassLoader suggestedClassLoader,
+	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ClassLoader classLoader,
 		Class<?> callingClass) {
 
-		ClassLoader classLoader = callingClass.getClassLoader();
+		ClassLoader fallbackClassLoader = callingClass.getClassLoader();
 
 		try {
 			return ResourceBundle.getBundle(baseName, locale, classLoader);
 		}
 		catch (MissingResourceException e) {
-			return ResourceBundle.getBundle(baseName, locale, suggestedClassLoader);
+			return ResourceBundle.getBundle(baseName, locale, fallbackClassLoader);
 		}
 	}
 
@@ -294,13 +294,13 @@ public final class OSGiClassLoaderUtil {
 	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ResourceBundle.Control control,
 		Class<?> callingClass) {
 
-		ClassLoader classLoader = callingClass.getClassLoader();
+		ClassLoader fallbackClassLoader = callingClass.getClassLoader();
 
 		try {
-			return ResourceBundle.getBundle(baseName, locale, classLoader, control);
+			return ResourceBundle.getBundle(baseName, locale, control);
 		}
 		catch (MissingResourceException e) {
-			return ResourceBundle.getBundle(baseName, locale, control);
+			return ResourceBundle.getBundle(baseName, locale, fallbackClassLoader, control);
 		}
 	}
 
@@ -315,16 +315,16 @@ public final class OSGiClassLoaderUtil {
 	 *
 	 * @return
 	 */
-	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ClassLoader suggestedClassLoader,
+	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ClassLoader classLoader,
 		ResourceBundle.Control control, Class<?> callingClass) {
 
-		ClassLoader classLoader = callingClass.getClassLoader();
+		ClassLoader fallbackClassLoader = callingClass.getClassLoader();
 
 		try {
 			return ResourceBundle.getBundle(baseName, locale, classLoader, control);
 		}
 		catch (MissingResourceException e) {
-			return ResourceBundle.getBundle(baseName, locale, suggestedClassLoader, control);
+			return ResourceBundle.getBundle(baseName, locale, fallbackClassLoader, control);
 		}
 	}
 
