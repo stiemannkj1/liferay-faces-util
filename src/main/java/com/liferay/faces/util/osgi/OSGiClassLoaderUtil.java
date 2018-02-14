@@ -26,6 +26,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
@@ -37,7 +38,6 @@ import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
 import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
 import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
-import com.liferay.faces.util.osgi.internal.ResourceBundleControlOSGiFriendlyImpl;
 import com.liferay.faces.util.resource.internal.ResourceProviderUtil;
 
 
@@ -195,31 +195,137 @@ public final class OSGiClassLoaderUtil {
 		return inputStream;
 	}
 
-	public static ResourceBundle getResourceBundle(String baseName) {
-		return ResourceBundle.getBundle(baseName, new ResourceBundleControlOSGiFriendlyImpl(baseName));
+	/**
+	 * TODO
+	 *
+	 * @param   baseName
+	 * @param   callingClass
+	 *
+	 * @return
+	 */
+	public static ResourceBundle getResourceBundle(String baseName, Class<?> callingClass) {
+
+		ClassLoader classLoader = callingClass.getClassLoader();
+
+		try {
+			return ResourceBundle.getBundle(baseName, Locale.getDefault(), classLoader);
+		}
+		catch (MissingResourceException e) {
+			return ResourceBundle.getBundle(baseName);
+		}
 	}
 
-	public static ResourceBundle getResourceBundle(String baseName, Locale locale) {
-		return ResourceBundle.getBundle(baseName, locale, new ResourceBundleControlOSGiFriendlyImpl(baseName));
+	/**
+	 * TODO
+	 *
+	 * @param   baseName
+	 * @param   locale
+	 * @param   callingClass
+	 *
+	 * @return
+	 */
+	public static ResourceBundle getResourceBundle(String baseName, Locale locale, Class<?> callingClass) {
+
+		ClassLoader classLoader = callingClass.getClassLoader();
+
+		try {
+			return ResourceBundle.getBundle(baseName, locale, classLoader);
+		}
+		catch (MissingResourceException e) {
+			return ResourceBundle.getBundle(baseName, locale);
+		}
 	}
 
-	public static ResourceBundle getResourceBundle(String baseName, ResourceBundle.Control control) {
-		return ResourceBundle.getBundle(baseName, new ResourceBundleControlOSGiFriendlyImpl(control));
+	/**
+	 * TODO
+	 *
+	 * @param   baseName
+	 * @param   control
+	 * @param   callingClass
+	 *
+	 * @return
+	 */
+	public static ResourceBundle getResourceBundle(String baseName, ResourceBundle.Control control,
+		Class<?> callingClass) {
+
+		ClassLoader classLoader = callingClass.getClassLoader();
+
+		try {
+			return ResourceBundle.getBundle(baseName, Locale.getDefault(), classLoader, control);
+		}
+		catch (MissingResourceException e) {
+			return ResourceBundle.getBundle(baseName, control);
+		}
 	}
 
-	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ClassLoader classLoader) {
-		return ResourceBundle.getBundle(baseName, locale, classLoader,
-				new ResourceBundleControlOSGiFriendlyImpl(baseName));
+	/**
+	 * TODO
+	 *
+	 * @param   baseName
+	 * @param   locale
+	 * @param   suggestedClassLoader
+	 * @param   callingClass
+	 *
+	 * @return
+	 */
+	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ClassLoader suggestedClassLoader,
+		Class<?> callingClass) {
+
+		ClassLoader classLoader = callingClass.getClassLoader();
+
+		try {
+			return ResourceBundle.getBundle(baseName, locale, classLoader);
+		}
+		catch (MissingResourceException e) {
+			return ResourceBundle.getBundle(baseName, locale, suggestedClassLoader);
+		}
 	}
 
-	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ResourceBundle.Control control) {
-		return ResourceBundle.getBundle(baseName, locale, new ResourceBundleControlOSGiFriendlyImpl(control));
+	/**
+	 * TODO
+	 *
+	 * @param   baseName
+	 * @param   locale
+	 * @param   control
+	 * @param   callingClass
+	 *
+	 * @return
+	 */
+	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ResourceBundle.Control control,
+		Class<?> callingClass) {
+
+		ClassLoader classLoader = callingClass.getClassLoader();
+
+		try {
+			return ResourceBundle.getBundle(baseName, locale, classLoader, control);
+		}
+		catch (MissingResourceException e) {
+			return ResourceBundle.getBundle(baseName, locale, control);
+		}
 	}
 
-	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ClassLoader classLoader,
-		ResourceBundle.Control control) {
-		return ResourceBundle.getBundle(baseName, locale, classLoader,
-				new ResourceBundleControlOSGiFriendlyImpl(control));
+	/**
+	 * TODO
+	 *
+	 * @param   baseName
+	 * @param   locale
+	 * @param   suggestedClassLoader
+	 * @param   control
+	 * @param   callingClass
+	 *
+	 * @return
+	 */
+	public static ResourceBundle getResourceBundle(String baseName, Locale locale, ClassLoader suggestedClassLoader,
+		ResourceBundle.Control control, Class<?> callingClass) {
+
+		ClassLoader classLoader = callingClass.getClassLoader();
+
+		try {
+			return ResourceBundle.getBundle(baseName, locale, classLoader, control);
+		}
+		catch (MissingResourceException e) {
+			return ResourceBundle.getBundle(baseName, locale, suggestedClassLoader, control);
+		}
 	}
 
 	/**
