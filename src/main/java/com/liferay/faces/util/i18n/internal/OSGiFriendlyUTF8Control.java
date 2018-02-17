@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.liferay.faces.util.i18n;
+package com.liferay.faces.util.i18n.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,12 +28,17 @@ import java.util.ResourceBundle;
 /**
  * Control for getting resource bundles with UTF-8 encoding.
  *
- * @deprecated  No replacement available.
- * @author      Juan Gonzalez
+ * @author  Juan Gonzalez
+ * @author  Kyle Stiemann
  */
-// Util classes may use com.liferay.faces.util.i18n.internal.OSGiFriendlyUTF8Control.
-@Deprecated
-public class UTF8Control extends ResourceBundle.Control {
+public class OSGiFriendlyUTF8Control extends ResourceBundle.Control {
+
+	// Private Data Members
+	private final ClassLoader bundleClassLoader;
+
+	public OSGiFriendlyUTF8Control(ClassLoader bundleClassLoader) {
+		this.bundleClassLoader = bundleClassLoader;
+	}
 
 	/**
 	 * See {@link ResourceBundle.Control#newBundle(String, Locale, String, ClassLoader, boolean)}.
@@ -51,6 +56,11 @@ public class UTF8Control extends ResourceBundle.Control {
 
 			URL resourceURL = classLoader.getResource(resourceName);
 
+			// If the default class loader cannot access the resource, try the bundle's class loader.
+			if (resourceURL == null) {
+				resourceURL = bundleClassLoader.getResource(resourceName);
+			}
+
 			if (resourceURL != null) {
 
 				URLConnection urlConnection = resourceURL.openConnection();
@@ -62,7 +72,13 @@ public class UTF8Control extends ResourceBundle.Control {
 			}
 		}
 		else {
+
 			inputStream = classLoader.getResourceAsStream(resourceName);
+
+			// If the default class loader cannot access the resource, try the bundle's class loader.
+			if (inputStream == null) {
+				inputStream = bundleClassLoader.getResourceAsStream(resourceName);
+			}
 		}
 
 		if (inputStream != null) {

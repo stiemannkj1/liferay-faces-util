@@ -28,10 +28,9 @@ import javax.faces.context.FacesContext;
 
 import com.liferay.faces.util.cache.Cache;
 import com.liferay.faces.util.cache.CacheFactory;
-import com.liferay.faces.util.i18n.internal.UTF8Control;
+import com.liferay.faces.util.i18n.internal.OSGiFriendlyUTF8Control;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
-import com.liferay.faces.util.osgi.internal.ResourceBundleControlOSGiFriendlyImpl;
 
 
 /**
@@ -49,11 +48,8 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(I18nBundleBase.class);
 
-	// Public Constants
-	public static final ResourceBundle.Control UTF8_CONTROL = new UTF8Control();
-
-	// Private Data Members
-	private I18n wrappedI18n;
+	// Private Final Data Members
+	private final I18n wrappedI18n;
 
 	public I18nBundleBase(I18n i18n) {
 
@@ -118,13 +114,15 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 			try {
 				String bundleKey = getBundleKey();
 				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+				ClassLoader bundleClassLoader = getClass().getClassLoader();
+				ResourceBundle.Control osgiFriendlyUTF8Control = new OSGiFriendlyUTF8Control(bundleClassLoader);
 
 				if (locale == null) {
 					resourceBundle = ResourceBundle.getBundle(bundleKey, Locale.getDefault(), classLoader,
-							UTF8_CONTROL);
+							osgiFriendlyUTF8Control);
 				}
 				else {
-					resourceBundle = ResourceBundle.getBundle(bundleKey, locale, classLoader, UTF8_CONTROL);
+					resourceBundle = ResourceBundle.getBundle(bundleKey, locale, classLoader, osgiFriendlyUTF8Control);
 				}
 			}
 			catch (MissingResourceException e) {

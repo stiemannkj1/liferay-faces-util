@@ -31,11 +31,9 @@ import com.liferay.faces.util.cache.Cache;
 import com.liferay.faces.util.cache.CacheFactory;
 import com.liferay.faces.util.config.WebConfigParam;
 import com.liferay.faces.util.i18n.I18n;
-import com.liferay.faces.util.i18n.I18nBundleBase;
 import com.liferay.faces.util.i18n.I18nUtil;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
-import com.liferay.faces.util.osgi.internal.ResourceBundleControlOSGiFriendlyImpl;
 
 
 /**
@@ -48,6 +46,10 @@ public class I18nImpl implements I18n, Serializable {
 
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(I18nImpl.class);
+
+	// Private Constants
+	private static final ResourceBundle.Control OSGI_FRIENDLY_UTF8_CONTROL = new OSGiFriendlyUTF8Control(I18nImpl.class
+			.getClassLoader());
 
 	public I18nImpl() {
 
@@ -104,7 +106,7 @@ public class I18nImpl implements I18n, Serializable {
 		try {
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n", locale, classLoader,
-					I18nBundleBase.UTF8_CONTROL);
+					OSGI_FRIENDLY_UTF8_CONTROL);
 			message = resourceBundle.getString(messageId);
 		}
 		catch (MissingResourceException e) {
@@ -163,7 +165,7 @@ public class I18nImpl implements I18n, Serializable {
 
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			facesResourceBundle = ResourceBundle.getBundle(messageBundle, locale, classLoader,
-					I18nBundleBase.UTF8_CONTROL);
+					OSGI_FRIENDLY_UTF8_CONTROL);
 
 			if (facesResourceBundleCache != null) {
 				facesResourceBundle = facesResourceBundleCache.putValueIfAbsent(locale, facesResourceBundle);
