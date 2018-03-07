@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,12 @@
  */
 package com.liferay.faces.util.context.internal;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.faces.context.PartialResponseWriter;
 import javax.faces.context.PartialViewContext;
 import javax.faces.context.PartialViewContextWrapper;
 
 import com.liferay.faces.util.client.Script;
-import com.liferay.faces.util.client.ScriptsEncoder;
-import com.liferay.faces.util.client.ScriptsEncoderFactory;
 import com.liferay.faces.util.context.FacesRequestContext;
-import com.liferay.faces.util.context.PartialResponseWriterWrapper;
 
 
 /**
@@ -69,63 +61,5 @@ public class PartialViewContextImpl extends PartialViewContextWrapper {
 	@Override
 	public void setPartialRequest(boolean isPartialRequest) {
 		wrappedPartialViewContext.setPartialRequest(isPartialRequest);
-	}
-
-	/**
-	 * This class serves as a wrapper around the {@link PartialResponseWriter} that will encode JavaScript within an
-	 * <eval>...</eval> section just before the end of the partial-response document.
-	 *
-	 * @author  Kyle Stiemann
-	 */
-	private static class PartialResponseWriterImpl extends PartialResponseWriterWrapper {
-
-		// Private Data Members
-		private boolean wroteEval;
-
-		public PartialResponseWriterImpl(PartialResponseWriter partialResponseWriter) {
-			super(partialResponseWriter);
-		}
-
-		@Override
-		public void endDocument() throws IOException {
-
-			if (!wroteEval) {
-
-				FacesRequestContext facesRequestContext = FacesRequestContext.getCurrentInstance();
-				List<Script> scripts = facesRequestContext.getScripts();
-
-				if (!scripts.isEmpty()) {
-
-					super.startEval();
-					FacesContext facesContext = FacesContext.getCurrentInstance();
-					encodeScripts(facesContext, scripts);
-					super.endEval();
-				}
-			}
-
-			super.endDocument();
-		}
-
-		@Override
-		public void endEval() throws IOException {
-
-			FacesRequestContext facesRequestContext = FacesRequestContext.getCurrentInstance();
-			List<Script> scripts = facesRequestContext.getScripts();
-
-			if (!scripts.isEmpty()) {
-				FacesContext facesContext = FacesContext.getCurrentInstance();
-				encodeScripts(facesContext, scripts);
-			}
-
-			super.endEval();
-			wroteEval = true;
-		}
-
-		private void encodeScripts(FacesContext facesContext, List<Script> scripts) throws IOException {
-
-			ExternalContext externalContext = facesContext.getExternalContext();
-			ScriptsEncoder ScriptsEncoder = ScriptsEncoderFactory.getScriptsEncoderInstance(externalContext);
-			ScriptsEncoder.encodeEvalScripts(facesContext, scripts);
-		}
 	}
 }
