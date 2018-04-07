@@ -31,7 +31,6 @@ import java.util.ResourceBundle;
  * @deprecated  No replacement available.
  * @author      Juan Gonzalez
  */
-// Util classes may use com.liferay.faces.util.i18n.internal.OSGiFriendlyUTF8Control.
 @Deprecated
 public class UTF8Control extends ResourceBundle.Control {
 

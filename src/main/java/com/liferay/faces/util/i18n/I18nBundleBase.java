@@ -28,9 +28,9 @@ import javax.faces.context.FacesContext;
 
 import com.liferay.faces.util.cache.Cache;
 import com.liferay.faces.util.cache.CacheFactory;
-import com.liferay.faces.util.i18n.internal.OSGiFriendlyUTF8Control;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
+import com.liferay.faces.util.osgi.internal.ResourceBundleUtil;
 
 
 /**
@@ -97,7 +97,8 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 
 		ExternalContext externalContext = facesContext.getExternalContext();
 		Map<String, Object> applicationMap = externalContext.getApplicationMap();
-		Cache<String, String> messageCache = (Cache<String, String>) applicationMap.get(getClass().getName());
+		Class<? extends I18nBundleBase> clazz = getClass();
+		Cache<String, String> messageCache = (Cache<String, String>) applicationMap.get(clazz.getName());
 
 		if ((messageCache != null) && messageCache.containsKey(key)) {
 
@@ -113,16 +114,15 @@ public abstract class I18nBundleBase extends I18nWrapper implements Serializable
 
 			try {
 				String bundleKey = getBundleKey();
-				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-				ClassLoader bundleClassLoader = getClass().getClassLoader();
-				ResourceBundle.Control osgiFriendlyUTF8Control = new OSGiFriendlyUTF8Control(bundleClassLoader);
+				ClassLoader threadContextClassLoader = Thread.currentThread().getContextClassLoader();
 
 				if (locale == null) {
-					resourceBundle = ResourceBundle.getBundle(bundleKey, Locale.getDefault(), classLoader,
-							osgiFriendlyUTF8Control);
+					resourceBundle = ResourceBundleUtil.getOSGiFriendlyUTF8ResourceBundle(bundleKey,
+							Locale.getDefault(), threadContextClassLoader, clazz);
 				}
 				else {
-					resourceBundle = ResourceBundle.getBundle(bundleKey, locale, classLoader, osgiFriendlyUTF8Control);
+					resourceBundle = ResourceBundleUtil.getOSGiFriendlyUTF8ResourceBundle(bundleKey, locale,
+							threadContextClassLoader, clazz);
 				}
 			}
 			catch (MissingResourceException e) {

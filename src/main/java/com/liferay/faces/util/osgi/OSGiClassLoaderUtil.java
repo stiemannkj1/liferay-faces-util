@@ -24,7 +24,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
@@ -35,6 +38,7 @@ import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
 import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
 import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
+import com.liferay.faces.util.osgi.internal.ResourceBundleUtil;
 import com.liferay.faces.util.resource.internal.ResourceProviderUtil;
 
 
@@ -50,7 +54,7 @@ import com.liferay.faces.util.resource.internal.ResourceProviderUtil;
 public final class OSGiClassLoaderUtil {
 
 	// logger
-	private static final Logger logger = LoggerFactory.getLogger(ResourceProviderUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(OSGiClassLoaderUtil.class);
 
 	private OSGiClassLoaderUtil() {
 		throw new AssertionError();
@@ -190,6 +194,44 @@ public final class OSGiClassLoaderUtil {
 		}
 
 		return inputStream;
+	}
+
+	/**
+	 * TODO
+	 *
+	 * @param   baseName
+	 * @param   targetLocale
+	 * @param   threadContextClassLoader
+	 * @param   callingClass
+	 *
+	 * @return
+	 *
+	 * @throws  MissingResourceException
+	 */
+	public static ResourceBundle getResourceBundle(String baseName, Locale targetLocale,
+		ClassLoader threadContextClassLoader, Class<?> callingClass) throws MissingResourceException {
+		return ResourceBundleUtil.getOSGiFriendlyResourceBundle(baseName, targetLocale, threadContextClassLoader,
+				callingClass);
+	}
+
+	/**
+	 * TODO
+	 *
+	 * @param   baseName
+	 * @param   targetLocale
+	 * @param   threadContextClassLoader
+	 * @param   control
+	 * @param   callingClass
+	 *
+	 * @return
+	 *
+	 * @throws  MissingResourceException
+	 */
+	public static ResourceBundle getResourceBundle(String baseName, Locale targetLocale,
+		ClassLoader threadContextClassLoader, ResourceBundle.Control control, Class<?> callingClass)
+		throws MissingResourceException {
+		return ResourceBundleUtil.getOSGiFriendlyResourceBundle(baseName, targetLocale, threadContextClassLoader,
+				control, callingClass);
 	}
 
 	/**
