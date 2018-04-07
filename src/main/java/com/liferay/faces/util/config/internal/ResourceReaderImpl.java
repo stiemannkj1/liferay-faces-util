@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,34 @@ package com.liferay.faces.util.config.internal;
 import java.io.InputStream;
 
 import javax.faces.context.ExternalContext;
+import javax.servlet.ServletContext;
 
 
 /**
  * @author  Neil Griffin
  */
-public class ResourceReaderExternalContextImpl implements ResourceReader {
+public class ResourceReaderImpl implements ResourceReader {
 
 	// Private Data Members
-	private ExternalContext externalContext;
+	private final ExternalContext externalContext;
+	private final ServletContext servletContext;
 
-	public ResourceReaderExternalContextImpl(ExternalContext externalContext) {
+	public ResourceReaderImpl(ExternalContext externalContext) {
 		this.externalContext = externalContext;
+		this.servletContext = null;
+	}
+
+	public ResourceReaderImpl(ServletContext servletContext) {
+		this.externalContext = null;
+		this.servletContext = servletContext;
 	}
 
 	public InputStream getResourceAsStream(String path) {
+
+		if (servletContext != null) {
+			return servletContext.getResourceAsStream(path);
+		}
+
 		return externalContext.getResourceAsStream(path);
 	}
 }
