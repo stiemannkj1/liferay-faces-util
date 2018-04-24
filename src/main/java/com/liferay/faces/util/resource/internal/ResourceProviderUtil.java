@@ -39,6 +39,8 @@ public final class ResourceProviderUtil {
 	// Public Constants
 	public static final String ALL_FACES_CONFIG_PATTERN = "*faces-config.xml";
 	public static final String META_INF_PATH = "/META-INF/";
+	public static final String WEB_FRAGMENT = "web-fragment.xml";
+	public static final String META_INF_WEB_FRAGMENT = META_INF_PATH + WEB_FRAGMENT;
 
 	private ResourceProviderUtil() {
 		throw new AssertionError();
