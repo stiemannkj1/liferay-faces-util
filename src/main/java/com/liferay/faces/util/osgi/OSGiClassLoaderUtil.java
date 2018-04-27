@@ -39,7 +39,6 @@ import com.liferay.faces.util.logging.LoggerFactory;
 import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
 import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
 import com.liferay.faces.util.osgi.internal.ResourceBundleUtil;
-import com.liferay.faces.util.resource.internal.ResourceProviderUtil;
 
 
 /**
@@ -186,11 +185,14 @@ public final class OSGiClassLoaderUtil {
 		InputStream inputStream = null;
 		URL resource = getResource(name, facesContext, suggestedClassLoader);
 
-		try {
-			inputStream = resource.openStream();
-		}
-		catch (IOException e) {
-			// Do nothing.
+		if (resource != null) {
+
+			try {
+				inputStream = resource.openStream();
+			}
+			catch (IOException e) {
+				// Do nothing.
+			}
 		}
 
 		return inputStream;
