@@ -20,6 +20,8 @@ import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
 
@@ -27,6 +29,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
 /**
  * @author  Neil Griffin
  */
+@ProviderType
 public class DebugPhaseListener implements PhaseListener {
 
 	// serialVersionUID
@@ -35,6 +38,7 @@ public class DebugPhaseListener implements PhaseListener {
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(DebugPhaseListener.class);
 
+	@Override
 	public void afterPhase(PhaseEvent phaseEvent) {
 
 		if (logger.isDebugEnabled()) {
@@ -51,6 +55,7 @@ public class DebugPhaseListener implements PhaseListener {
 		}
 	}
 
+	@Override
 	public void beforePhase(PhaseEvent phaseEvent) {
 
 		if (logger.isDebugEnabled()) {
@@ -67,6 +72,7 @@ public class DebugPhaseListener implements PhaseListener {
 		}
 	}
 
+	@Override
 	public PhaseId getPhaseId() {
 		return PhaseId.ANY_PHASE;
 	}

@@ -20,11 +20,18 @@ import java.util.Locale;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
  * @author  Neil Griffin
  */
-public class I18nUtil {
+@ProviderType
+public final class I18nUtil {
+
+	private I18nUtil() {
+		throw new AssertionError();
+	}
 
 	public static FacesMessage getFacesMessage(I18n i18n, FacesContext facesContext, Locale locale,
 		FacesMessage.Severity severity, String messageId) {

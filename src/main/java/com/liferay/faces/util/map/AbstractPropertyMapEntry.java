@@ -17,13 +17,17 @@ package com.liferay.faces.util.map;
 
 import java.util.Map;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
  * @author  Neil Griffin
  */
+@ProviderType
 public abstract class AbstractPropertyMapEntry<V> implements Map.Entry<String, V> {
 
-	private String key;
+	// Private Final Data Members
+	private final String key;
 
 	public AbstractPropertyMapEntry(String key) {
 		this.key = key;

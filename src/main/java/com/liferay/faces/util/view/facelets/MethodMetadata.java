@@ -24,16 +24,19 @@ import javax.faces.view.facelets.Metadata;
 import javax.faces.view.facelets.TagAttribute;
 import javax.faces.view.facelets.TagAttributeException;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
  * @author  Neil Griffin
  */
+@ProviderType
 public class MethodMetadata extends Metadata {
 
-	// Private Data Members
-	Class<?>[] args;
-	TagAttribute tagAttribute;
-	Method writeMethod;
+	// Private Final Data Members
+	private final Class<?>[] args;
+	private final TagAttribute tagAttribute;
+	private final Method writeMethod;
 
 	public MethodMetadata(TagAttribute tagAttribute, Method writeMethod, Class<?>[] args) {
 		this.tagAttribute = tagAttribute;
@@ -55,5 +58,4 @@ public class MethodMetadata extends Metadata {
 			throw new TagAttributeException(tagAttribute, e);
 		}
 	}
-
 }

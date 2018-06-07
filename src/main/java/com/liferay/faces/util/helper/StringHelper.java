@@ -15,10 +15,18 @@
  */
 package com.liferay.faces.util.helper;
 
+import org.osgi.annotation.versioning.ProviderType;
+
+
 /**
  * @author  Neil Griffin
  */
-public class StringHelper {
+@ProviderType
+public final class StringHelper {
+
+	private StringHelper() {
+		throw new AssertionError();
+	}
 
 	public static String[] append(String[] array, String... values) {
 

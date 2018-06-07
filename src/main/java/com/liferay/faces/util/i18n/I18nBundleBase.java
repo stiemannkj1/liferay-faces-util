@@ -26,6 +26,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import org.osgi.annotation.versioning.ConsumerType;
+
 import com.liferay.faces.util.cache.Cache;
 import com.liferay.faces.util.cache.CacheFactory;
 import com.liferay.faces.util.i18n.internal.UTF8Control;
@@ -40,6 +42,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
  *
  * @author  Neil Griffin
  */
+@ConsumerType
 public abstract class I18nBundleBase extends I18nWrapper implements Serializable {
 
 	// serialVersionUID

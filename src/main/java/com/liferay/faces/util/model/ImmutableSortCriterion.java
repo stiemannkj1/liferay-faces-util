@@ -13,36 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.liferay.faces.util.helper;
+package com.liferay.faces.util.model;
 
-import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.annotation.versioning.ConsumerType;
 
 
 /**
- * This class provides additional methods that operate against the javax.lang.Integer system class.
+ * @author  Neil Griffin
  */
-@ProviderType
-public final class IntegerHelper {
+@ConsumerType
+public final class ImmutableSortCriterion extends SortCriterion {
 
-	private IntegerHelper() {
-		throw new AssertionError();
+	public ImmutableSortCriterion(String columnId, Order order) {
+		super(columnId, order);
 	}
 
-	public static int toInteger(String value) {
-		return toInteger(value, 0);
+	/**
+	 * Throws {@link UnsupportedOperationException}.
+	 *
+	 * @param  columnId
+	 */
+	@Override
+	public void setColumnId(String columnId) {
+		throw new UnsupportedOperationException();
 	}
 
-	public static int toInteger(String value, int defaultValue) {
-
-		int valueAsInt = defaultValue;
-
-		try {
-			valueAsInt = Integer.parseInt(value);
-		}
-		catch (NumberFormatException e) {
-			// ignore
-		}
-
-		return valueAsInt;
+	/**
+	 * Throws {@link UnsupportedOperationException}.
+	 *
+	 * @param  order
+	 */
+	@Override
+	public void setOrder(Order order) {
+		throw new UnsupportedOperationException();
 	}
 }

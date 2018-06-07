@@ -18,13 +18,17 @@ package com.liferay.faces.util.map;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 
 /**
  * @author  Neil Griffin
  */
+@ProviderType
 public abstract class AbstractPropertyMap<V> implements Map<String, V> {
 
 	public void clear() {
@@ -207,4 +211,54 @@ public abstract class AbstractPropertyMap<V> implements Map<String, V> {
 	protected abstract void removeProperty(String name);
 
 	protected abstract void setProperty(String name, V value);
+
+	private static final class IteratorWrapper<V> implements Iterator<Map.Entry<String, V>> {
+
+		// Private Final Data Members
+		private final Iterator<Map.Entry<String, V>> wrappedIterator;
+
+		// Private Data Members
+		private Map.Entry<String, V> currentEntry;
+
+		public IteratorWrapper(Iterator<Map.Entry<String, V>> iterator) {
+			this.wrappedIterator = iterator;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return wrappedIterator.hasNext();
+		}
+
+		@Override
+		public Map.Entry<String, V> next() {
+			currentEntry = wrappedIterator.next();
+
+			return currentEntry;
+		}
+
+		@Override
+		public void remove() {
+
+			if (currentEntry != null) {
+
+				if (currentEntry instanceof AbstractPropertyMapEntry) {
+					AbstractPropertyMapEntry<V> propertyMapEntry = (AbstractPropertyMapEntry<V>) currentEntry;
+					propertyMapEntry.remove();
+				}
+			}
+
+			wrappedIterator.remove();
+		}
+	}
+
+	private static final class PropertyMapEntrySet<V> extends HashSet<Map.Entry<String, V>> {
+
+		// serialVersionUID
+		private static final long serialVersionUID = 6500855053442038977L;
+
+		@Override
+		public Iterator<Map.Entry<String, V>> iterator() {
+			return new IteratorWrapper<V>(super.iterator());
+		}
+	}
 }

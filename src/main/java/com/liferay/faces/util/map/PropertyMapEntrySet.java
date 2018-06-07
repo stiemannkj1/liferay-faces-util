@@ -19,10 +19,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
- * @author  Neil Griffin
+ * @deprecated  No replacement available.
+ * @author      Neil Griffin
  */
+@Deprecated
+@ProviderType
 public class PropertyMapEntrySet<V> extends HashSet<Map.Entry<String, V>> {
 
 	// serialVersionUID
@@ -33,6 +38,10 @@ public class PropertyMapEntrySet<V> extends HashSet<Map.Entry<String, V>> {
 		return new IteratorWrapper(super.iterator());
 	}
 
+	/**
+	 * @deprecated  No replacement available.
+	 */
+	@Deprecated
 	public class IteratorWrapper implements Iterator<Map.Entry<String, V>> {
 
 		private Map.Entry<String, V> currentEntry;

@@ -13,36 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.liferay.faces.util.helper;
+package com.liferay.faces.util.lang;
 
-import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.annotation.versioning.ConsumerType;
 
 
 /**
- * This class provides additional methods that operate against the javax.lang.Integer system class.
+ * @author  Kyle Stiemann
  */
-@ProviderType
-public final class IntegerHelper {
+@ConsumerType
+public final class ImmutableNameValuePair<N, V> extends NameValuePair<N, V> {
 
-	private IntegerHelper() {
-		throw new AssertionError();
+	public ImmutableNameValuePair(N name, V value) {
+		super(name, value);
 	}
 
-	public static int toInteger(String value) {
-		return toInteger(value, 0);
+	/**
+	 * Throws {@link UnsupportedOperationException}.
+	 *
+	 * @param  name
+	 */
+	@Override
+	public void setName(N name) {
+		throw new UnsupportedOperationException();
 	}
 
-	public static int toInteger(String value, int defaultValue) {
-
-		int valueAsInt = defaultValue;
-
-		try {
-			valueAsInt = Integer.parseInt(value);
-		}
-		catch (NumberFormatException e) {
-			// ignore
-		}
-
-		return valueAsInt;
+	/**
+	 * Throws {@link UnsupportedOperationException}.
+	 *
+	 * @param  value
+	 */
+	@Override
+	public void setValue(V value) {
+		throw new UnsupportedOperationException();
 	}
 }

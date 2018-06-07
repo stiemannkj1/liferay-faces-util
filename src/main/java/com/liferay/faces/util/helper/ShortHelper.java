@@ -15,10 +15,18 @@
  */
 package com.liferay.faces.util.helper;
 
+import org.osgi.annotation.versioning.ProviderType;
+
+
 /**
  * This class provides additional methods that operate against the javax.lang.Short system class.
  */
-public class ShortHelper {
+@ProviderType
+public final class ShortHelper {
+
+	private ShortHelper() {
+		throw new AssertionError();
+	}
 
 	public static short toShort(String value) {
 		return toShort(value, (short) 0);

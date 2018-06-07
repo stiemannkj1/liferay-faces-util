@@ -15,10 +15,18 @@
  */
 package com.liferay.faces.util.helper;
 
+import org.osgi.annotation.versioning.ProviderType;
+
+
 /**
  * This class provides additional methods that operate against the javax.lang.Long system class.
  */
-public class LongHelper {
+@ProviderType
+public final class LongHelper {
+
+	private LongHelper() {
+		throw new AssertionError();
+	}
 
 	public static long toLong(String value) {
 		return toLong(value, 0);

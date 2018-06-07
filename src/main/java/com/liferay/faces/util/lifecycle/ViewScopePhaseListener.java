@@ -32,6 +32,8 @@ import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
 
@@ -52,6 +54,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
  *
  * @author  Neil Griffin
  */
+@ProviderType
 public class ViewScopePhaseListener implements PhaseListener {
 
 	// serialVersionUID
@@ -60,24 +63,59 @@ public class ViewScopePhaseListener implements PhaseListener {
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(ViewScopePhaseListener.class);
 
+	@Override
 	public void afterPhase(PhaseEvent phaseEvent) {
 
 		FacesContext facesContext = phaseEvent.getFacesContext();
 
 		if (facesContext.isPostback()) {
-			processViewScopedManagedBeans(facesContext);
+			_processViewScopedManagedBeans(facesContext);
 		}
 	}
 
+	@Override
 	public void beforePhase(PhaseEvent phaseEvent) {
 		// This method is required by the interface but is not used.
 	}
 
+	@Override
 	public PhaseId getPhaseId() {
 		return PhaseId.RESTORE_VIEW;
 	}
 
+	/**
+	 * @deprecated  No replacement available.
+	 */
+	@Deprecated
 	protected Map<String, Field> getManagedPropertyFields(Class<?> managedBeanClass) {
+		return _getManagedPropertyFields(managedBeanClass);
+	}
+
+	/**
+	 * @deprecated  No replacement available.
+	 */
+	@Deprecated
+	protected String getManagedPropertyName(ManagedProperty managedProperty, Field field) {
+		return _getManagedPropertyName(managedProperty, field);
+	}
+
+	/**
+	 * @deprecated  No replacement available.
+	 */
+	@Deprecated
+	protected void injectManagedProperties(Object managedBean, ManagedPropertyInjector managedPropertyInjector) {
+		_injectManagedProperties(managedBean, managedPropertyInjector);
+	}
+
+	/**
+	 * @deprecated  No replacement available.
+	 */
+	@Deprecated
+	protected void processViewScopedManagedBeans(FacesContext facesContext) {
+		_processViewScopedManagedBeans(facesContext);
+	}
+
+	private Map<String, Field> _getManagedPropertyFields(Class<?> managedBeanClass) {
 
 		Map<String, Field> managedPropertyFields = new HashMap<String, Field>();
 
@@ -92,7 +130,7 @@ public class ViewScopePhaseListener implements PhaseListener {
 			if (managedPropertyAnnotation != null) {
 
 				// Add the managed-property field to the return value map.
-				String managedPropertyName = getManagedPropertyName(managedPropertyAnnotation, declaredField);
+				String managedPropertyName = _getManagedPropertyName(managedPropertyAnnotation, declaredField);
 				managedPropertyFields.put(managedPropertyName, declaredField);
 
 				// Recurse with the superclass of the specified class, so as to gather up all the @ManagedProperty
@@ -101,7 +139,7 @@ public class ViewScopePhaseListener implements PhaseListener {
 
 				if (!Object.class.equals(superClass)) {
 
-					Map<String, Field> superClassFields = getManagedPropertyFields(superClass);
+					Map<String, Field> superClassFields = _getManagedPropertyFields(superClass);
 
 					Set<Map.Entry<String, Field>> superClassFieldsEntrySet = superClassFields.entrySet();
 
@@ -124,7 +162,7 @@ public class ViewScopePhaseListener implements PhaseListener {
 		return managedPropertyFields;
 	}
 
-	protected String getManagedPropertyName(ManagedProperty managedProperty, Field field) {
+	private String _getManagedPropertyName(ManagedProperty managedProperty, Field field) {
 
 		// Get the name of the managed-property from the @ManagedProperty annotation.
 		String managedPropertyName = managedProperty.name();
@@ -138,10 +176,10 @@ public class ViewScopePhaseListener implements PhaseListener {
 		return managedPropertyName;
 	}
 
-	protected void injectManagedProperties(Object managedBean, ManagedPropertyInjector managedPropertyInjector) {
+	private void _injectManagedProperties(Object managedBean, ManagedPropertyInjector managedPropertyInjector) {
 
 		if (managedBean.getClass().isAnnotationPresent(ManagedBean.class)) {
-			Map<String, Field> managedPropertyFields = getManagedPropertyFields(managedBean.getClass());
+			Map<String, Field> managedPropertyFields = _getManagedPropertyFields(managedBean.getClass());
 			Set<Map.Entry<String, Field>> managedPropertyEntrySet = managedPropertyFields.entrySet();
 
 			for (Map.Entry<String, Field> managedPropertyMapEntry : managedPropertyEntrySet) {
@@ -158,7 +196,7 @@ public class ViewScopePhaseListener implements PhaseListener {
 		}
 	}
 
-	protected void processViewScopedManagedBeans(FacesContext facesContext) {
+	private void _processViewScopedManagedBeans(FacesContext facesContext) {
 		UIViewRoot viewRoot = facesContext.getViewRoot();
 
 		if (viewRoot != null) {
@@ -171,7 +209,7 @@ public class ViewScopePhaseListener implements PhaseListener {
 				Object managedBean = managedBeanMapEntry.getValue();
 
 				if (managedBean != null) {
-					injectManagedProperties(managedBean, managedPropertyInjector);
+					_injectManagedProperties(managedBean, managedPropertyInjector);
 				}
 			}
 		}
@@ -193,7 +231,7 @@ public class ViewScopePhaseListener implements PhaseListener {
 			this.elContext = facesContext.getELContext();
 		}
 
-		public void inject(Object managedBean, String managedPropertyName, Class<?> managedPropertyClass,
+		private void inject(Object managedBean, String managedPropertyName, Class<?> managedPropertyClass,
 			String elExpression) {
 
 			String expressionWithoutSyntax = removeExpressionSyntax(elExpression);
@@ -222,7 +260,7 @@ public class ViewScopePhaseListener implements PhaseListener {
 			}
 		}
 
-		protected String removeExpressionSyntax(String elExpression) {
+		private String removeExpressionSyntax(String elExpression) {
 
 			String expressionWithoutSyntax = elExpression;
 

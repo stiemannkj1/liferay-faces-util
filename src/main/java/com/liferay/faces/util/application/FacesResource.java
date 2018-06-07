@@ -15,14 +15,19 @@
  */
 package com.liferay.faces.util.application;
 
+import org.osgi.annotation.versioning.ProviderType;
+
+
 /**
  * @author  Kyle Stiemann
  */
+@ProviderType
 public class FacesResource {
 
-	private String contentType;
-	private String library;
-	private String name;
+	// Private Final Data Members
+	private final String contentType;
+	private final String library;
+	private final String name;
 
 	public FacesResource(String library, String name) {
 		this(library, name, null);

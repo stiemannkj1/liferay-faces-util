@@ -22,6 +22,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -43,10 +45,11 @@ import com.liferay.faces.util.xml.internal.SAXParserImpl;
  *
  * @author  Neil Griffin
  */
+@ProviderType
 public class ConcurrentSAXParserFactory extends SAXParserFactory {
 
-	// Private Data Members
-	private Map<String, Boolean> featureMap;
+	// Private Final Data Members
+	private final Map<String, Boolean> featureMap;
 
 	protected ConcurrentSAXParserFactory() {
 		super();
@@ -79,5 +82,4 @@ public class ConcurrentSAXParserFactory extends SAXParserFactory {
 		SAXNotSupportedException {
 		featureMap.put(name, value);
 	}
-
 }
