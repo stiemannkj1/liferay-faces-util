@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
- * @author  Neil Griffin
+ * @deprecated  No replacement available.
+ * @author      Neil Griffin
  */
+@Deprecated
+@ProviderType
 public class PropertyMapEntrySet<V> extends HashSet<Map.Entry<String, V>> {
 
 	// serialVersionUID
@@ -33,6 +38,10 @@ public class PropertyMapEntrySet<V> extends HashSet<Map.Entry<String, V>> {
 		return new IteratorWrapper(super.iterator());
 	}
 
+	/**
+	 * @deprecated  No replacement available.
+	 */
+	@Deprecated
 	public class IteratorWrapper implements Iterator<Map.Entry<String, V>> {
 
 		private Map.Entry<String, V> currentEntry;

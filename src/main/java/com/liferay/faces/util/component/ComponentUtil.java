@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,22 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.component.html.HtmlOutputLabel;
 import javax.faces.context.FacesContext;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
  * @author  Neil Griffin
  */
-public class ComponentUtil {
+@ProviderType
+public final class ComponentUtil {
 
 	// Private Constants
 	private static final String DOUBLE_BACKSLASH_COLON = "\\\\\\\\:";
 	private static final String REGEX_COLON = "[:]";
+
+	private ComponentUtil() {
+		throw new AssertionError();
+	}
 
 	public static String concatCssClasses(String... classNames) {
 

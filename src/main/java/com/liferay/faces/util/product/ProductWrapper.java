@@ -17,10 +17,13 @@ package com.liferay.faces.util.product;
 
 import javax.faces.FacesWrapper;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
  * @author  Kyle Stiemann
  */
+@ProviderType
 public abstract class ProductWrapper implements Product, FacesWrapper<Product> {
 
 	@Override

@@ -13,20 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.liferay.faces.util.model;
-
-import java.util.List;
+package com.liferay.faces.util.lang;
 
 import org.osgi.annotation.versioning.ConsumerType;
 
 
 /**
- * @author  Neil Griffin
+ * @author  Kyle Stiemann
  */
 @ConsumerType
-public interface Sortable {
+public final class ImmutableNameValuePair<N, V> extends NameValuePair<N, V> {
 
-	public List<SortCriterion> getSortCriteria();
+	public ImmutableNameValuePair(N name, V value) {
+		super(name, value);
+	}
 
-	public void setSortCriteria(List<SortCriterion> sortCriteria);
+	/**
+	 * Throws {@link UnsupportedOperationException}.
+	 *
+	 * @param  name
+	 */
+	@Override
+	public void setName(N name) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Throws {@link UnsupportedOperationException}.
+	 *
+	 * @param  value
+	 */
+	@Override
+	public void setValue(V value) {
+		throw new UnsupportedOperationException();
+	}
 }

@@ -32,6 +32,8 @@ import java.util.ResourceBundle;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 import org.osgi.framework.Bundle;
 
 import com.liferay.faces.util.logging.Logger;
@@ -50,6 +52,7 @@ import com.liferay.faces.util.osgi.internal.ResourceBundleUtil;
  *
  * @author  Kyle Stiemann
  */
+@ProviderType
 public final class OSGiClassLoaderUtil {
 
 	// logger

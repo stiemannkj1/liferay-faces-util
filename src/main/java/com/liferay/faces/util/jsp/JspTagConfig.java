@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,18 @@ import javax.faces.view.facelets.FaceletHandler;
 import javax.faces.view.facelets.Tag;
 import javax.faces.view.facelets.TagConfig;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
  * This is a dummy class that exists in order to prevent an exception from being thrown during startup on JBoss AS. For
  * more information, see <a href="http://issues.liferay.com/browse/FACES-1576">FACES-1576</a>.
  *
- * @author  Neil Griffin
+ * @deprecated  No replacement available.
+ * @author      Neil Griffin
  */
+@Deprecated
+@ProviderType
 public class JspTagConfig implements TagConfig {
 
 	// Private Data Members
@@ -56,5 +61,4 @@ public class JspTagConfig implements TagConfig {
 	public void setTagId(String tagId) {
 		this.tagId = tagId;
 	}
-
 }

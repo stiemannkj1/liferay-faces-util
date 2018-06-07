@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,18 @@
  */
 package com.liferay.faces.util.helper;
 
+import org.osgi.annotation.versioning.ProviderType;
+
+
 /**
  * This class provides additional methods that operate against the javax.lang.Integer system class.
  */
-public class IntegerHelper {
+@ProviderType
+public final class IntegerHelper {
+
+	private IntegerHelper() {
+		throw new AssertionError();
+	}
 
 	public static int toInteger(String value) {
 		return toInteger(value, 0);

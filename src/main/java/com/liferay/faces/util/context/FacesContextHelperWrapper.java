@@ -26,12 +26,15 @@ import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseListener;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 import com.liferay.faces.util.client.Script;
 
 
 /**
  * @author  Neil Griffin
  */
+@ProviderType
 public abstract class FacesContextHelperWrapper implements FacesContextHelper, FacesWrapper<FacesContextHelper> {
 
 	@Override

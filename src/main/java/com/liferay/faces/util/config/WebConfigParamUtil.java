@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.liferay.faces.util.config;
 import javax.faces.context.ExternalContext;
 import javax.servlet.ServletContext;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 import com.liferay.faces.util.helper.BooleanHelper;
 import com.liferay.faces.util.helper.IntegerHelper;
 import com.liferay.faces.util.helper.LongHelper;
@@ -29,7 +31,12 @@ import com.liferay.faces.util.helper.LongHelper;
  *
  * @author  Neil Griffin
  */
-public class WebConfigParamUtil {
+@ProviderType
+public final class WebConfigParamUtil {
+
+	private WebConfigParamUtil() {
+		throw new AssertionError();
+	}
 
 	public static boolean getBooleanValue(ExternalContext externalContext, String name, String alternateName,
 		boolean defaultBooleanValue) {

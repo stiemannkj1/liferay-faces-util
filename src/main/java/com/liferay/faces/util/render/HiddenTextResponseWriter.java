@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,18 @@ import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.ResponseWriter;
 import javax.faces.context.ResponseWriterWrapper;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
- * This class is a {@link ResponseWriter} that is designed to intercept the encoding of a {@link
- * HtmlInputText} component. This class ensures that the "id" attribute is written correctly and that the "type"
- * attribute is "hidden".
+ * This class is a {@link ResponseWriter} that is designed to intercept the encoding of a {@link HtmlInputText}
+ * component. This class ensures that the "id" attribute is written correctly and that the "type" attribute is "hidden".
  *
- * @author  Neil Griffin
+ * @deprecated  No replacement available.
+ * @author      Neil Griffin
  */
+@Deprecated
+@ProviderType
 public class HiddenTextResponseWriter extends ResponseWriterWrapper {
 
 	// Private Data Members

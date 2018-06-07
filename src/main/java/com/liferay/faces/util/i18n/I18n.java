@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import java.util.Locale;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
  * This interface defines a contract for obtaining internationalized messages of type {@link String} or {@link
@@ -27,6 +29,7 @@ import javax.faces.context.FacesContext;
  *
  * @author  Neil Griffin
  */
+@ProviderType
 public interface I18n {
 
 	/**

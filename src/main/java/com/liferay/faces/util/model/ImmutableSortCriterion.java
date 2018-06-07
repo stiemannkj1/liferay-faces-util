@@ -15,8 +15,6 @@
  */
 package com.liferay.faces.util.model;
 
-import java.util.List;
-
 import org.osgi.annotation.versioning.ConsumerType;
 
 
@@ -24,9 +22,29 @@ import org.osgi.annotation.versioning.ConsumerType;
  * @author  Neil Griffin
  */
 @ConsumerType
-public interface Sortable {
+public final class ImmutableSortCriterion extends SortCriterion {
 
-	public List<SortCriterion> getSortCriteria();
+	public ImmutableSortCriterion(String columnId, Order order) {
+		super(columnId, order);
+	}
 
-	public void setSortCriteria(List<SortCriterion> sortCriteria);
+	/**
+	 * Throws {@link UnsupportedOperationException}.
+	 *
+	 * @param  columnId
+	 */
+	@Override
+	public void setColumnId(String columnId) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Throws {@link UnsupportedOperationException}.
+	 *
+	 * @param  order
+	 */
+	@Override
+	public void setOrder(Order order) {
+		throw new UnsupportedOperationException();
+	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.liferay.faces.util.render;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,8 @@ import javax.faces.component.behavior.ClientBehaviorHolder;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 import com.liferay.faces.util.component.ComponentUtil;
 import com.liferay.faces.util.component.Styleable;
 import com.liferay.faces.util.logging.Logger;
@@ -38,7 +41,14 @@ import com.liferay.faces.util.logging.LoggerFactory;
 /**
  * @author  Neil Griffin
  */
-public class RendererUtil {
+@ProviderType
+public final class RendererUtil {
+
+	// Public Constants
+	public static final List<String> MOUSE_DOM_EVENTS = Collections.unmodifiableList(Arrays.asList("onclick",
+				"ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup"));
+	public static final List<String> KEYBOARD_DOM_EVENTS = Collections.unmodifiableList(Arrays.asList("onkeydown",
+				"onkeypress", "onkeyup"));
 
 	// Private Constants
 	private static final String JAVA_SCRIPT_HEX_PREFIX = "\\x";
@@ -48,6 +58,10 @@ public class RendererUtil {
 
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(RendererUtil.class);
+
+	private RendererUtil() {
+		throw new AssertionError();
+	}
 
 	/**
 	 * Adds an Ajax behavior to the specified client behavior holder according to its default event. If the Ajax
@@ -114,6 +128,28 @@ public class RendererUtil {
 						}
 					}
 				}
+			}
+		}
+	}
+
+	/**
+	 * This method exists as a convenience for Component developers to encode attributes that pass through to the DOM in
+	 * JSF 2.1.
+	 *
+	 * @since  3.2.0
+	 */
+	public static void encodePassThroughAttributes(ResponseWriter responseWriter, UIComponent uiComponent,
+		final List<String> PASS_THROUGH_ATTRIBUTES) throws IOException {
+
+		Map<String, Object> attributes = uiComponent.getAttributes();
+
+		for (final String PASS_THROUGH_ATTRIBUTE : PASS_THROUGH_ATTRIBUTES) {
+
+			Object passThroughAttributeValue = attributes.get(PASS_THROUGH_ATTRIBUTE);
+
+			if (passThroughAttributeValue != null) {
+				responseWriter.writeAttribute(PASS_THROUGH_ATTRIBUTE, passThroughAttributeValue,
+					PASS_THROUGH_ATTRIBUTE);
 			}
 		}
 	}

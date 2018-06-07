@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,15 @@
  */
 package com.liferay.faces.util.client;
 
+import org.osgi.annotation.versioning.ProviderType;
+
+
 /**
  * See http://www.zytrax.com/tech/web/browser_ids.htm for examples.
  *
  * @author  Brian Wing Shun Chan
  */
+@ProviderType
 public interface BrowserSniffer {
 
 	public boolean acceptsGzip();

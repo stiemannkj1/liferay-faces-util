@@ -19,6 +19,8 @@ import javax.faces.FacesWrapper;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 import com.liferay.faces.util.factory.FactoryExtensionFinder;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
@@ -27,6 +29,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
 /**
  * @author  Kyle Stiemann
  */
+@ProviderType
 public abstract class ProductFactory implements FacesWrapper<ProductFactory> {
 
 	// Logger

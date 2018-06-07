@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,17 @@ package com.liferay.faces.util.map;
 
 import java.util.Map;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
  * @author  Neil Griffin
  */
+@ProviderType
 public abstract class AbstractPropertyMapEntry<V> implements Map.Entry<String, V> {
 
-	private String key;
+	// Private Final Data Members
+	private final String key;
 
 	public AbstractPropertyMapEntry(String key) {
 		this.key = key;

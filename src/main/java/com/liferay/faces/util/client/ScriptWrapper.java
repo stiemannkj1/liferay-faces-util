@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package com.liferay.faces.util.client;
 
 import javax.faces.FacesWrapper;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
  * Provides a simple implementation of {@link Script} that can be subclassed in order to decorate another instance of
@@ -24,6 +26,7 @@ import javax.faces.FacesWrapper;
  *
  * @author  Kyle Stiemann
  */
+@ProviderType
 public abstract class ScriptWrapper implements Script, FacesWrapper<Script> {
 
 	/**

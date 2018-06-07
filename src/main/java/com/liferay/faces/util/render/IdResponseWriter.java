@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,17 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.ResponseWriter;
 import javax.faces.context.ResponseWriterWrapper;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
- * This class is a {@link ResponseWriter} that ensures the "id" attribute is always written to a particular
- * element. There are two general use cases for this class: 1. Ensure that the id is always rendered for a specific
- * element. 2. Render a different id than the delegating renderer would normally render.
+ * This class is a {@link ResponseWriter} that ensures the "id" attribute is always written to a particular element.
+ * There are two general use cases for this class: 1. Ensure that the id is always rendered for a specific element. 2.
+ * Render a different id than the delegating renderer would normally render.
  *
  * @author  Neil Griffin
  */
+@ProviderType
 public class IdResponseWriter extends ResponseWriterWrapper {
 
 	// Private Data Members

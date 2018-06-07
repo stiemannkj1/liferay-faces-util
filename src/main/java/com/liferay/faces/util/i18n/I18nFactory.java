@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,15 @@ import javax.faces.FacesWrapper;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 import com.liferay.faces.util.factory.FactoryExtensionFinder;
 
 
 /**
  * @author  Neil Griffin
  */
+@ProviderType
 public abstract class I18nFactory implements FacesWrapper<I18nFactory> {
 
 	/**

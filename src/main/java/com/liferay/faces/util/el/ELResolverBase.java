@@ -26,6 +26,8 @@ import javax.el.ELContext;
 import javax.el.ELResolver;
 import javax.faces.application.Application;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
 
@@ -40,6 +42,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
  *
  * @author  Neil Griffin
  */
+@ProviderType
 public abstract class ELResolverBase extends ELResolver implements Serializable {
 
 	// Logger

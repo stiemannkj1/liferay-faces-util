@@ -18,7 +18,6 @@ package com.liferay.faces.util.osgi;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +27,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 import org.osgi.framework.Bundle;
 
@@ -47,6 +48,7 @@ import com.sun.faces.config.FacesInitializer;
 /**
  * @author  Kyle Stiemann
  */
+@ProviderType
 public final class FacesThinWabInitializer implements ServletContainerInitializer {
 
 	private static boolean getBooleanValue(ServletContext servletContext, String name, String alternateName,

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2017 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2018 Liferay, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package com.liferay.faces.util.cache;
 
 import java.util.Set;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 
 /**
  * This class contains a minimal set of methods required to manipulate a cache of key+value pairs.
@@ -26,6 +28,7 @@ import java.util.Set;
  * @since   2.1
  * @since   1.1
  */
+@ProviderType
 public interface Cache<K, V> {
 
 	/**
