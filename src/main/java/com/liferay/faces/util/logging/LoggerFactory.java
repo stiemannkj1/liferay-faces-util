@@ -20,6 +20,8 @@ import java.util.ServiceLoader;
 
 import org.osgi.annotation.versioning.ProviderType;
 
+import com.liferay.faces.util.logging.internal.LoggerFactoryImpl;
+
 
 /**
  * In order to minimize dependencies, this class provides a layer of abstraction over different logging mechanisms
@@ -49,15 +51,8 @@ public abstract class LoggerFactory {
 
 			if (loggerFactoryImpl == null) {
 
-				try {
-
-					// FACES-2966 Netbeans auto completion fails for Liferay Faces components
-					Class<?> clazz = Class.forName("com.liferay.faces.util.logging.internal.LoggerFactoryImpl");
-					loggerFactoryImpl = (LoggerFactory) clazz.newInstance();
-				}
-				catch (Exception e) {
-					throw new RuntimeException("Unable locate service for " + LoggerFactory.class.getName(), e);
-				}
+				// FACES-2966 Netbeans auto completion fails for Liferay Faces components
+				loggerFactoryImpl = new LoggerFactoryImpl();
 			}
 
 			LOGGER_FACTORY = loggerFactoryImpl;

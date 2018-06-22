@@ -13,24 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.liferay.faces.util.config.internal;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Enumeration;
-
-import com.liferay.faces.util.config.WebConfig;
-
-
-/**
- * @author  Neil Griffin
- */
-public interface WebConfigScanner {
-
-	// Public Constants
-	public static final String WEB_FRAGMENT_META_INF_PATH = "META-INF/web-fragment.xml";
-
-	public WebConfig scan() throws IOException;
-
-	public WebConfig scanWebFragments(Enumeration<URL> webFragmentURLs) throws IOException;
-}
+@org.osgi.annotation.versioning.Version("1.0.0")
+package com.liferay.faces.util.osgi;

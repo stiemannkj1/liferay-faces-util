@@ -233,6 +233,11 @@
 				<configuration>
 					<bnd>
 						<![CDATA[
+							# Avoid "service not found" errors on redeploys of this bundle by ensuring that this bundle
+							# is activated as soon as the service classes are loaded. For more details, see
+							# https://issues.apache.org/jira/browse/ARIES-957
+							Bundle-ActivationPolicy: \
+								lazy;includes="com.liferay.faces.util.osgi.mojarra.spi.internal"
 							# Consult individual package-info.java files to determine Export-Packages and versions.
 							-exportcontents: ${packages;VERSIONED}
 							# javax.el is automatically imported with the following versions:
@@ -240,10 +245,30 @@
 							Import-Package: \
 								!com.liferay.faces.util,\
 								!com.liferay.faces.util.*,\
+								com.sun.faces.util;version="[2.2.0,2.3.0)",\
 								javax.el;version="[2.2.0,4.0.0)",\
 								org.apache.commons.fileupload;version="[1.3.0,2)";resolution:=optional,\
 								org.apache.log4j;version="[1.2.0,2)",\
 								*
+							Require-Bundle: com.liferay.faces.osgi.weaver;bundle-version="[1.0.0,2.0.0)"
+							# Allow Util to load alternative FactoryExtensionFinder, LoggerFactory, and ProductFactory
+							# SPI implementations. Util provides the default implementations, so the capability is
+							# marked as optional.
+							Require-Capability: \
+								osgi.serviceloader;filter:="(osgi.serviceloader=com.liferay.faces.util.factory.FactoryExtensionFinder)";\
+								resolution:=optional;cardinality:=multiple,\
+								osgi.serviceloader;filter:="(osgi.serviceloader=com.liferay.faces.util.logging.LoggerFactory)";\
+								resolution:=optional;cardinality:=multiple,\
+								osgi.serviceloader;filter:="(osgi.serviceloader=com.liferay.faces.util.product.ProductFactory)";\
+								resolution:=optional;cardinality:=multiple,\
+								osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)";\
+								resolution:=optional,\
+								osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+							# Allow Util to provide SPI implementations to Mojarra.
+							Provide-Capability: \
+								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.AnnotationProvider,\
+								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.FaceletConfigResourceProvider,\
+								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.FacesConfigResourceProvider
 						]]>
 					</bnd>
 				</configuration>
@@ -403,9 +428,23 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.faces</artifactId>
+			<version>2.2.17</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>osgi.annotation</artifactId>
 			<version>6.0.1</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>5.0.0</version>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>

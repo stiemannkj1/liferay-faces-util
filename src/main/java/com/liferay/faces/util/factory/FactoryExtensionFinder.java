@@ -24,6 +24,7 @@ import javax.faces.context.ExternalContext;
 import org.osgi.annotation.versioning.ProviderType;
 
 import com.liferay.faces.util.config.ConfiguredElement;
+import com.liferay.faces.util.factory.internal.FactoryExtensionFinderImpl;
 
 
 /**
@@ -86,17 +87,8 @@ public abstract class FactoryExtensionFinder {
 
 				if (instance == null) {
 
-					try {
-
-						// FACES-2966 Netbeans auto completion fails for Liferay Faces components
-						Class<?> clazz = Class.forName(
-								"com.liferay.faces.util.factory.internal.FactoryExtensionFinderImpl");
-						instance = (FactoryExtensionFinder) clazz.newInstance();
-					}
-					catch (Exception e) {
-						throw new FacesException("Unable locate service for " + FactoryExtensionFinder.class.getName(),
-							e);
-					}
+					// FACES-2966 Netbeans auto completion fails for Liferay Faces components
+					instance = new FactoryExtensionFinderImpl();
 				}
 			}
 			else {
