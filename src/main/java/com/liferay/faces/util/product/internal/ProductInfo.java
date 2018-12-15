@@ -148,7 +148,7 @@ public class ProductInfo {
 
 		try {
 
-			Class<?> clazz = Class.forName(className);
+			Class<?> clazz = ProductBase.classForName(className);
 			detected = true;
 			productInfo = newInstance(detected, title, clazz, pomPropertiesFile, buildId, warnOnFail);
 		}
@@ -168,29 +168,38 @@ public class ProductInfo {
 
 		String title = expectedTitle;
 		String version = null;
-		Package pkg = clazz.getPackage();
 
-		if ((pkg != null) && (pkg.getImplementationVersion() != null)) {
+		if (clazz != null) {
 
-			String implementationTitle = pkg.getImplementationTitle();
+			Package package_ = clazz.getPackage();
 
-			if (implementationTitle != null) {
-				title = implementationTitle;
+			if (package_ != null) {
+
+				String implementationVersion = package_.getImplementationVersion();
+
+				if (implementationVersion != null) {
+
+					String implementationTitle = package_.getImplementationTitle();
+
+					if (implementationTitle != null) {
+						title = implementationTitle;
+					}
+
+					version = implementationVersion;
+				}
 			}
 
-			version = pkg.getImplementationVersion();
-		}
+			if (version == null) {
 
-		if (version == null) {
+				PackageManifest packageManifest = new PackageManifest(clazz, expectedTitle);
+				version = packageManifest.getImplementationVersion();
+			}
 
-			PackageManifest packageManifest = new PackageManifest(clazz, expectedTitle);
-			version = packageManifest.getImplementationVersion();
-		}
+			if ((version == null) && (pomPropertiesFile != null)) {
 
-		if ((version == null) && (pomPropertiesFile != null)) {
-
-			PomProperties pomProperties = new PomProperties(clazz, pomPropertiesFile);
-			version = pomProperties.getVersion();
+				PomProperties pomProperties = new PomProperties(clazz, pomPropertiesFile);
+				version = pomProperties.getVersion();
+			}
 		}
 
 		if ((version == null) && warnOnFail) {

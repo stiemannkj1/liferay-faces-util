@@ -15,6 +15,10 @@
  */
 package com.liferay.faces.util.product.internal;
 
+import javax.faces.context.FacesContext;
+
+import com.liferay.faces.util.internal.TCCLUtil;
+import com.liferay.faces.util.osgi.OSGiClassLoaderUtil;
 import com.liferay.faces.util.product.Product;
 
 
@@ -28,6 +32,24 @@ public abstract class ProductBase implements Product {
 
 	protected ProductBase(ProductInfo productInfo) {
 		this.productInfo = productInfo;
+	}
+
+	protected static Class<?> classForName(String className) throws ClassNotFoundException {
+
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		Class<?> currentClass = getCurrentClass();
+		ClassLoader classLoader = TCCLUtil.getThreadContextClassLoaderOrDefault(currentClass);
+
+		return OSGiClassLoaderUtil.classForName(className, true, facesContext, classLoader);
+	}
+
+	private static Class<?> getCurrentClass() {
+
+		Object object = new Object() {
+				// empty
+			};
+
+		return object.getClass().getEnclosingClass();
 	}
 
 	@Override

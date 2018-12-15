@@ -39,7 +39,7 @@ public class ProductRichFacesImpl extends ProductBase {
 
 			try {
 
-				Class<?> versionBeanClass = Class.forName("org.richfaces.VersionBean");
+				Class<?> versionBeanClass = classForName("org.richfaces.VersionBean");
 				Object versionObj = versionBeanClass.getDeclaredField("VERSION").get(Object.class);
 				Method method = versionObj.getClass().getMethod("getVersion");
 				version = (String) method.invoke(versionObj, (Object[]) null);

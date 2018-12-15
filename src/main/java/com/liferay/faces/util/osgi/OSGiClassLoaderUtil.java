@@ -142,6 +142,38 @@ public final class OSGiClassLoaderUtil {
 	 *                                bundles fail to load the class in which case it will be used in a final attempt to
 	 *                                load the class. For more information, see {@link Class#forName(java.lang.String,
 	 *                                boolean, java.lang.ClassLoader)}.
+	 * @param   servletContext        The {@link ServletContext} of the current WAB.
+	 * @param   suggestedClassLoader  The ClassLoader which the caller expected to be able to load the class. This is
+	 *                                ignored unless all relevant OSGi bundles fail to load the class in which case it
+	 *                                will be used in a final attempt to load the class. For more information, see
+	 *                                {@link Class#forName(java.lang.String, boolean, java.lang.ClassLoader)}.
+	 *
+	 * @return  The named class.
+	 *
+	 * @throws  ClassNotFoundException  If the named class is not found by any bundle and the named class is not found
+	 *                                  by the ClassLoader of the calling Class.
+	 */
+	public static Class<?> classForName(String className, boolean initialize, ServletContext servletContext,
+		ClassLoader suggestedClassLoader) throws ClassNotFoundException {
+		return getClass(className, initialize, servletContext, suggestedClassLoader);
+	}
+
+	/**
+	 * This method is intended to replace {@link Class#forName(java.lang.String, boolean, java.lang.ClassLoader)} in an
+	 * OSGi environment. This method attempts to load the named class by iterating over the list of OSGi bundles that
+	 * the current Faces WAB depends on and checking if the bundle's ClassLoader can load the class (using {@link
+	 * Class#forName(java.lang.String, boolean, java.lang.ClassLoader)}). If the class cannot be loaded by any bundle,
+	 * the suggested ClassLoader is used in a final attempt to load the class.
+	 *
+	 * @param   className             The name of the class to be obtained. For more information, see {@link
+	 *                                Class#forName(java.lang.String, boolean, java.lang.ClassLoader)}.
+	 * @param   initialize            Determines whether the class should be initialized before it is returned. For more
+	 *                                information, see {@link Class#forName(java.lang.String, boolean,
+	 *                                java.lang.ClassLoader). @paramsuggestedClassLoaderThe ClassLoader which the caller
+	 *                                expected to be able to load the class. This is ignored unless all relevant OSGi
+	 *                                bundles fail to load the class in which case it will be used in a final attempt to
+	 *                                load the class. For more information, see {@link Class#forName(java.lang.String,
+	 *                                boolean, java.lang.ClassLoader)}.
 	 * @param   facesContext          The {@link FacesContext} of the current WAB (which can be obtained from {@link
 	 *                                FacesContext#getCurrentInstance()}) or null if the FacesContext hasn't been
 	 *                                initialized yet.

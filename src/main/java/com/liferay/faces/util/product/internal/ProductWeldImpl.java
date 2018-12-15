@@ -32,7 +32,7 @@ public class ProductWeldImpl extends ProductBase {
 
 		try {
 
-			Class<?> cdiImplClass = Class.forName("org.jboss.weld.util.Types");
+			Class<?> cdiImplClass = classForName("org.jboss.weld.util.Types");
 			productInfo = ProductInfo.newInstance("Weld Servlet (Uber Jar)", cdiImplClass);
 
 			if (!productInfo.detected) {

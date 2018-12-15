@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.liferay.faces.util.product.internal;
+package com.liferay.faces.util.internal;
+
 
 /**
- * @author  Neil Griffin
+ * @author  Kyle Stiemann
  */
-public class ProductLiferayFacesBridgeImpl extends ProductBase {
+public final class TCCLUtil {
 
-	public ProductLiferayFacesBridgeImpl() {
-		super(newProductInfo());
+	private TCCLUtil() {
+		throw new AssertionError();
 	}
 
-	private static ProductInfo newProductInfo() {
+	public static ClassLoader getThreadContextClassLoaderOrDefault(Class<?> callingClass) {
 
-		Class<?> clazz = null;
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-		try {
-			clazz = classForName("com.liferay.faces.bridge.servlet.BridgeSessionListener");
-		}
-		catch (ClassNotFoundException e) {
-			// Do nothing.
+		if (classLoader == null) {
+			classLoader = callingClass.getClassLoader();
 		}
 
-		return ProductInfo.newInstance("Liferay Faces Bridge", clazz);
+		return classLoader;
 	}
 }

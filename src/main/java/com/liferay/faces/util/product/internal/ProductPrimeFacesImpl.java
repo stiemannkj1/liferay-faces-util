@@ -31,7 +31,7 @@ public class ProductPrimeFacesImpl extends ProductBase {
 
 		try {
 
-			Class<?> constantsClass = Class.forName("org.primefaces.util.Constants");
+			Class<?> constantsClass = classForName("org.primefaces.util.Constants");
 			detected = true;
 
 			try {

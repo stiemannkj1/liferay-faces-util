@@ -33,13 +33,16 @@ import javax.faces.event.NamedEvent;
 import javax.faces.render.FacesBehaviorRenderer;
 import javax.faces.render.FacesRenderer;
 import javax.faces.validator.FacesValidator;
+import javax.servlet.ServletContext;
 import javax.servlet.annotation.HandlesTypes;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.wiring.BundleWiring;
 
+import com.liferay.faces.util.internal.TCCLUtil;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
+import com.liferay.faces.util.osgi.OSGiClassLoaderUtil;
 import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
 import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
 
@@ -55,45 +58,6 @@ public class AnnotationProviderOSGiImpl extends AnnotationProvider {
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(AnnotationProviderOSGiImpl.class);
 
-	// Private Constants
-	private static final Set<Class<?>> ANNOTATIONS_HANDLED_BY_MOJARRA;
-
-	static {
-
-		final Set<Class<?>> annotationsHandledByMojarra = new HashSet<Class<?>>();
-
-		try {
-
-			Class<?> annotationScanningServletContainerInitializerClass = Class.forName(FacesInitializer.class
-					.getName());
-			HandlesTypes handledTypes = annotationScanningServletContainerInitializerClass.getAnnotation(
-					HandlesTypes.class);
-			Class[] annotationsHandledByMojarraArray = handledTypes.value();
-			annotationsHandledByMojarra.addAll(Arrays.<Class<?>>asList(annotationsHandledByMojarraArray));
-
-			// This list of classes was obtained from the AnnotationProvider JavaDoc.
-			annotationsHandledByMojarra.addAll(Arrays.<Class<?>>asList(FacesComponent.class, FacesConverter.class,
-					FacesRenderer.class, FacesValidator.class, ManagedBean.class, NamedEvent.class, FacesBehavior.class,
-					FacesBehaviorRenderer.class));
-		}
-		catch (ClassNotFoundException e) {
-			logger.error(e);
-		}
-		catch (NoClassDefFoundError e) {
-			logger.error(e);
-		}
-
-		if (!annotationsHandledByMojarra.isEmpty()) {
-			ANNOTATIONS_HANDLED_BY_MOJARRA = Collections.unmodifiableSet(annotationsHandledByMojarra);
-		}
-		else {
-			ANNOTATIONS_HANDLED_BY_MOJARRA = Collections.emptySet();
-		}
-	}
-
-	public AnnotationProviderOSGiImpl() {
-	}
-
 	@Override
 	public Map<Class<? extends Annotation>, Set<Class<?>>> getAnnotatedClasses(Set<URI> set) {
 
@@ -103,7 +67,7 @@ public class AnnotationProviderOSGiImpl extends AnnotationProvider {
 		if (FacesBundleUtil.isCurrentWarThinWab()) {
 
 			FacesBundlesHandlerBase<Map<Class<? extends Annotation>, Set<Class<?>>>> facesBundlesHandler =
-				new FacesBundlesHandlerAnnotationProviderOSGiImpl();
+				new FacesBundlesHandlerAnnotationProviderOSGiImpl(sc);
 			annotatedClasses = Collections.unmodifiableMap(facesBundlesHandler.handleFacesBundles(sc));
 		}
 		else {
@@ -115,6 +79,44 @@ public class AnnotationProviderOSGiImpl extends AnnotationProvider {
 
 	private static final class FacesBundlesHandlerAnnotationProviderOSGiImpl
 		extends FacesBundlesHandlerBase<Map<Class<? extends Annotation>, Set<Class<?>>>> {
+
+		// Private Final Data Members
+		private final Set<Class<?>> annotationsHandledByMojarra;
+
+		private FacesBundlesHandlerAnnotationProviderOSGiImpl(ServletContext servletContext) {
+
+			final Set<Class<?>> annotationsHandledByMojarra = new HashSet<Class<?>>();
+			Class<? extends FacesBundlesHandlerAnnotationProviderOSGiImpl> clazz = getClass();
+			ClassLoader classLoader = TCCLUtil.getThreadContextClassLoaderOrDefault(clazz);
+
+			try {
+
+				Class<?> annotationScanningServletContainerInitializerClass = OSGiClassLoaderUtil.classForName(
+						FacesInitializer.class.getName(), true, servletContext, classLoader);
+				HandlesTypes handledTypes = annotationScanningServletContainerInitializerClass.getAnnotation(
+						HandlesTypes.class);
+				Class[] annotationsHandledByMojarraArray = handledTypes.value();
+				annotationsHandledByMojarra.addAll(Arrays.<Class<?>>asList(annotationsHandledByMojarraArray));
+
+				// This list of classes was obtained from the AnnotationProvider JavaDoc.
+				annotationsHandledByMojarra.addAll(Arrays.<Class<?>>asList(FacesComponent.class, FacesConverter.class,
+						FacesRenderer.class, FacesValidator.class, ManagedBean.class, NamedEvent.class,
+						FacesBehavior.class, FacesBehaviorRenderer.class));
+			}
+			catch (ClassNotFoundException e) {
+				logger.error(e);
+			}
+			catch (NoClassDefFoundError e) {
+				logger.error(e);
+			}
+
+			if (!annotationsHandledByMojarra.isEmpty()) {
+				this.annotationsHandledByMojarra = Collections.unmodifiableSet(annotationsHandledByMojarra);
+			}
+			else {
+				this.annotationsHandledByMojarra = Collections.emptySet();
+			}
+		}
 
 		private static Class<?> loadBundleClass(Bundle bundle, String className) {
 
@@ -139,7 +141,7 @@ public class AnnotationProviderOSGiImpl extends AnnotationProvider {
 			Map<Class<? extends Annotation>, Set<Class<?>>> annotatedClasses =
 				new HashMap<Class<? extends Annotation>, Set<Class<?>>>();
 
-			for (Class<?> annotation : ANNOTATIONS_HANDLED_BY_MOJARRA) {
+			for (Class<?> annotation : annotationsHandledByMojarra) {
 				annotatedClasses.put((Class<? extends Annotation>) annotation, new HashSet<Class<?>>());
 			}
 
@@ -176,7 +178,7 @@ public class AnnotationProviderOSGiImpl extends AnnotationProvider {
 
 						Class<? extends Annotation> annotationType = annotation.annotationType();
 
-						if (ANNOTATIONS_HANDLED_BY_MOJARRA.contains(annotationType)) {
+						if (annotationsHandledByMojarra.contains(annotationType)) {
 							returnValueReference.get().get(annotationType).add(clazz);
 						}
 					}

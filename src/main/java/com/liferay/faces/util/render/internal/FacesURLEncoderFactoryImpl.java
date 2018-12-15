@@ -19,6 +19,10 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.Method;
 
+import javax.faces.context.FacesContext;
+
+import com.liferay.faces.util.internal.TCCLUtil;
+import com.liferay.faces.util.osgi.OSGiClassLoaderUtil;
 import com.liferay.faces.util.render.FacesURLEncoder;
 import com.liferay.faces.util.render.FacesURLEncoderFactory;
 

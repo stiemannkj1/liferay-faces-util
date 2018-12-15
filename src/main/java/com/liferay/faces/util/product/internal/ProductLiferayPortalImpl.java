@@ -34,7 +34,7 @@ public class ProductLiferayPortalImpl extends ProductBase {
 
 		try {
 
-			Class<?> releaseInfoClass = Class.forName("com.liferay.portal.kernel.util.ReleaseInfo");
+			Class<?> releaseInfoClass = classForName("com.liferay.portal.kernel.util.ReleaseInfo");
 			Class<?>[] emptyClassArray = new Class[] {};
 			Object[] emptyObjectArray = new Object[] {};
 			Method method = releaseInfoClass.getMethod("getBuildNumber", emptyClassArray);
@@ -45,7 +45,7 @@ public class ProductLiferayPortalImpl extends ProductBase {
 			productInfo = new ProductInfo(title, version, buildId);
 
 			if (productInfo.majorVersion <= 0) {
-				productInfo = new ProductInfo(title, version, buildId);
+				productInfo = null;
 			}
 		}
 		catch (Exception e) {

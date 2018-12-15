@@ -266,9 +266,12 @@
 								osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
 							# Allow Util to provide SPI implementations to Mojarra.
 							Provide-Capability: \
-								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.AnnotationProvider,\
-								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.FaceletConfigResourceProvider,\
-								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.FacesConfigResourceProvider
+								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.AnnotationProvider;\
+								uses:="com.sun.faces.spi",\
+								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.FaceletConfigResourceProvider;\
+								uses:="com.sun.faces.spi",\
+								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.FacesConfigResourceProvider;\
+								uses:="com.sun.faces.spi"
 						]]>
 					</bnd>
 				</configuration>

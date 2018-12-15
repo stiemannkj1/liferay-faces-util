@@ -36,10 +36,10 @@ public class ProductICEfacesImpl extends ProductBase {
 			Class<?> productInfoClass;
 
 			try {
-				productInfoClass = Class.forName("org.icefaces.application.ProductInfo");
+				productInfoClass = classForName("org.icefaces.application.ProductInfo");
 			}
 			catch (ClassNotFoundException e) {
-				productInfoClass = Class.forName("com.icesoft.faces.application.ProductInfo");
+				productInfoClass = classForName("com.icesoft.faces.application.ProductInfo");
 			}
 
 			int buildId = IntegerHelper.toInteger((String) productInfoClass.getDeclaredField("REVISION").get(

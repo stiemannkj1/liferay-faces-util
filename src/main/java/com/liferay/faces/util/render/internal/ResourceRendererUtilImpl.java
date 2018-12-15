@@ -62,7 +62,6 @@ public class ResourceRendererUtilImpl extends RendererWrapper implements Compone
 	 * constructor, and then calls the {@link #restoreState(FacesContext, Object)} method.
 	 */
 	public ResourceRendererUtilImpl() {
-
 		// Defer initialization of wrappedRenderer until restoreState(FacesContext, Object) is called.
 	}
 
@@ -177,10 +176,10 @@ public class ResourceRendererUtilImpl extends RendererWrapper implements Compone
 
 		if (wrappedRenderer == null) {
 
+			Class<? extends Renderer> rendererClass = (Class<? extends Renderer>) state;
+
 			try {
-				String wrappedRendererClassName = (String) state;
-				Class<?> wrappedRendererClass = Class.forName(wrappedRendererClassName);
-				wrappedRenderer = (Renderer) wrappedRendererClass.newInstance();
+				wrappedRenderer = rendererClass.newInstance();
 			}
 			catch (Exception e) {
 				logger.error(e);
@@ -190,7 +189,7 @@ public class ResourceRendererUtilImpl extends RendererWrapper implements Compone
 
 	@Override
 	public Object saveState(FacesContext facesContext) {
-		return wrappedRenderer.getClass().getName();
+		return wrappedRenderer.getClass();
 	}
 
 	@Override
