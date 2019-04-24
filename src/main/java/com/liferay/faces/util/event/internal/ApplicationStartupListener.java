@@ -31,8 +31,14 @@ import com.liferay.faces.util.config.FacesConfig;
 import com.liferay.faces.util.config.WebConfigParam;
 import com.liferay.faces.util.config.internal.ApplicationConfigInitializer;
 import com.liferay.faces.util.config.internal.ApplicationConfigInitializerImpl;
+import com.liferay.faces.util.el.internal.ELResolverWrapper;
 import com.liferay.faces.util.el.internal.I18nMap;
 import com.liferay.faces.util.factory.FactoryExtensionFinder;
+import com.liferay.faces.util.lang.ThreadSafeAccessor;
+import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
+import com.liferay.faces.util.osgi.internal.OnDemandBeanManagerKey;
+import javax.el.ELResolver;
+import javax.enterprise.inject.spi.BeanManager;
 
 
 /**
@@ -81,7 +87,40 @@ public class ApplicationStartupListener extends ApplicationStartupListenerCompat
 
 			UtilDependencyVerifier.verify(initExternalContext);
 			I18nMap.initMessageCache(initFacesContext);
+			BeanManager beanManager = (BeanManager) applicationMap.get(OnDemandBeanManagerKey.INSTANCE);
+
+			if (beanManager != null && FacesBundleUtil.isCurrentWarThinWab()) {
+
+				ELResolver elResolver = beanManager.getELResolver();
+				application.addELResolver(elResolver);
+			}
+
 			publishEvent(application, initFacesContext, applicationConfig);
+		}
+	}
+
+	private static final class BeanManagerELResolverAccessor extends ThreadSafeAccessor<ELResolver, FacesContext> {
+
+		@Override
+		protected ELResolver computeValue(FacesContext facesContext) {
+
+			ExternalContext externalContext = facesContext.getExternalContext();
+			Map<String, Object> applicationMap = externalContext.getApplicationMap();
+			BeanManager beanManager = (BeanManager) applicationMap.get(OnDemandBeanManagerKey.INSTANCE);
+			return beanManager.getELResolver();
+		}
+	}
+
+	private static final class ELResolverLazyCDIImpl extends ELResolverWrapper {
+
+		private final BeanManagerELResolverAccessor beanManagerELResolverAccessor =
+			new BeanManagerELResolverAccessor();
+
+		@Override
+		public ELResolver getWrapped() {
+
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			return beanManagerELResolverAccessor.get(facesContext);
 		}
 	}
 }

@@ -78,10 +78,10 @@
 		<faces.api.version>${faces.spec.version}</faces.api.version>
 		<faces.spec.version>2.2</faces.spec.version>
 		<full.version>${project.version} (${timestamp} AD)</full.version>
-		<jdk6.javac.executable>/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/bin/javac</jdk6.javac.executable>
+		<jdk7.javac.executable>/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/bin/javac</jdk7.javac.executable>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<surefire.version>2.12</surefire.version>
-		<use.jdk6.for.compile>false</use.jdk6.for.compile>
+		<use.jdk7.for.compile>false</use.jdk7.for.compile>
 	</properties>
 
 	<build>
@@ -94,9 +94,9 @@
 					<configuration>
 						<compilerVersion>1.6</compilerVersion>
 						<encoding>UTF-8</encoding>
-						<executable>${jdk6.javac.executable}</executable>
-						<forceJavacCompilerUse>${use.jdk6.for.compile}</forceJavacCompilerUse>
-						<fork>${use.jdk6.for.compile}</fork>
+						<executable>${jdk7.javac.executable}</executable>
+						<forceJavacCompilerUse>${use.jdk7.for.compile}</forceJavacCompilerUse>
+						<fork>${use.jdk7.for.compile}</fork>
 						<source>1.6</source>
 						<target>1.6</target>
 						<verbose>true</verbose>
@@ -263,15 +263,24 @@
 								resolution:=optional;cardinality:=multiple,\
 								osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)";\
 								resolution:=optional,\
-								osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+								osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",\
+								osgi.extender;\
+									filter:="(&(osgi.extender=osgi.serviceloader.registrar)(version>=1.0.0)(!(version>=2.0.0)))",\
+								osgi.implementation;\
+									filter:="(&(osgi.implementation=osgi.cdi)(version>=1.0.0)(!(version>=2.0.0)))"
 							# Allow Util to provide SPI implementations to Mojarra.
 							Provide-Capability: \
 								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.AnnotationProvider;\
-								uses:="com.sun.faces.spi",\
+									uses:="com.sun.faces.spi",\
 								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.FaceletConfigResourceProvider;\
-								uses:="com.sun.faces.spi",\
+									uses:="com.sun.faces.spi",\
 								osgi.serviceloader;osgi.serviceloader=com.sun.faces.spi.FacesConfigResourceProvider;\
-								uses:="com.sun.faces.spi"
+									uses:="com.sun.faces.spi",\
+								osgi.serviceloader;osgi.serviceloader=javax.enterprise.inject.spi.Extension;\
+									osgi.cdi.extension="liferay.jsf";\
+									register:="com.liferay.faces.util.osgi.FacesCDIThinWabExtension";\
+									uses:="com.sun.faces,javax.enterprise.event,javax.enterprise.inject.spi,javax.inject,javax.servlet",\
+								osgi.cdi.extension;osgi.cdi.extension="liferay.jsf";version:Version="1.0.0"
 						]]>
 					</bnd>
 				</configuration>
@@ -308,10 +317,10 @@
 
 	<profiles>
 		<profile>
-			<id>compileWithJDK6Linux</id>
+			<id>compileWithJDK7Linux</id>
 			<activation>
 				<file>
-					<exists>${env.HOME}/Tools/jdk1.6.0_45/bin/javac</exists>
+					<exists>${env.HOME}/Tools/jdk1.7.0_80/bin/javac</exists>
 				</file>
 				<os>
 					<family>unix</family>
@@ -319,28 +328,28 @@
 				</os>
 			</activation>
 			<properties>
-				<jdk6.javac.executable>${env.HOME}/Tools/jdk1.6.0_45/bin/javac</jdk6.javac.executable>
-				<use.jdk6.for.compile>true</use.jdk6.for.compile>
+				<jdk7.javac.executable>${env.HOME}/Tools/jdk1.7.0_80/bin/javac</jdk7.javac.executable>
+				<use.jdk7.for.compile>true</use.jdk7.for.compile>
 			</properties>
 		</profile>
 		<profile>
-			<id>compileWithJDK6Mac</id>
+			<id>compileWithJDK7Mac</id>
 			<activation>
 				<file>
-					<exists>${use.jdk6.for.compile}</exists>
+					<exists>${use.jdk7.for.compile}</exists>
 				</file>
 				<os>
 					<family>mac</family>
 				</os>
 			</activation>
 			<properties>
-				<use.jdk6.for.compile>true</use.jdk6.for.compile>
+				<use.jdk7.for.compile>true</use.jdk7.for.compile>
 			</properties>
 		</profile>
 		<profile>
 			<id>release</id>
 			<properties>
-				<use.jdk6.for.compile>true</use.jdk6.for.compile>
+				<use.jdk7.for.compile>true</use.jdk7.for.compile>
 			</properties>
 			<build>
 				<plugins>
@@ -404,6 +413,13 @@
 			<artifactId>javax.el-api</artifactId>
 			<version>2.2.1</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>javax.faces</groupId>
