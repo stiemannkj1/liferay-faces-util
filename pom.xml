@@ -303,6 +303,13 @@
 		</dependency>
 		<!-- END: Only required for file upload -->
 		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>javax.el</groupId>
 			<artifactId>javax.el-api</artifactId>
 			<version>2.2.1</version>
@@ -332,6 +339,13 @@
 			<version>1.2.14</version>
 			<optional>true</optional>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.faces</artifactId>
+			<version>2.2.19</version>
+			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<!-- BEGIN: Test dependencies -->
 		<dependency>

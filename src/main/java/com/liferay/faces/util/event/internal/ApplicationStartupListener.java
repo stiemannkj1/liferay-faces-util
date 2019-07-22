@@ -20,6 +20,8 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
 
+import javax.el.ELResolver;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.faces.application.Application;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -31,8 +33,11 @@ import com.liferay.faces.util.config.FacesConfig;
 import com.liferay.faces.util.config.WebConfigParam;
 import com.liferay.faces.util.config.internal.ApplicationConfigInitializer;
 import com.liferay.faces.util.config.internal.ApplicationConfigInitializerImpl;
+import com.liferay.faces.util.el.internal.ELResolverWrapper;
 import com.liferay.faces.util.el.internal.I18nMap;
 import com.liferay.faces.util.factory.FactoryExtensionFinder;
+import com.liferay.faces.util.lang.ThreadSafeAccessor;
+import com.liferay.faces.util.osgi.internal.OnDemandBeanManagerKey;
 
 
 /**
@@ -81,7 +86,41 @@ public class ApplicationStartupListener extends ApplicationStartupListenerCompat
 
 			UtilDependencyVerifier.verify(initExternalContext);
 			I18nMap.initMessageCache(initFacesContext);
+
+			BeanManager beanManager = (BeanManager) applicationMap.get(OnDemandBeanManagerKey.INSTANCE);
+
+			if (beanManager != null) {
+				application.addELResolver(beanManager.getELResolver());
+			}
+			else {
+				application.addELResolver(new ELResolverLazyCDIImpl());
+			}
+
 			publishEvent(application, initFacesContext, applicationConfig);
+		}
+	}
+
+	private static final class BeanManagerELResolverAccessor extends ThreadSafeAccessor<ELResolver, Void> {
+
+		@Override
+		protected ELResolver computeValue(Void _void) {
+
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = facesContext.getExternalContext();
+			Map<String, Object> applicationMap = externalContext.getApplicationMap();
+			BeanManager beanManager = (BeanManager) applicationMap.get(OnDemandBeanManagerKey.INSTANCE);
+
+			return beanManager.getELResolver();
+		}
+	}
+
+	private static final class ELResolverLazyCDIImpl extends ELResolverWrapper {
+
+		private final BeanManagerELResolverAccessor beanManagerELResolverAccessor = new BeanManagerELResolverAccessor();
+
+		@Override
+		public ELResolver getWrapped() {
+			return beanManagerELResolverAccessor.get(null);
 		}
 	}
 }
