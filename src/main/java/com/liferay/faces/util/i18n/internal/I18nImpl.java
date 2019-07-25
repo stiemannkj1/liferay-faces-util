@@ -34,6 +34,7 @@ import com.liferay.faces.util.i18n.I18n;
 import com.liferay.faces.util.i18n.I18nUtil;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
+import com.liferay.faces.util.osgi.internal.ResourceBundleUtil;
 
 
 /**
@@ -100,8 +101,7 @@ public class I18nImpl implements I18n, Serializable {
 		String message = null;
 
 		try {
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n", locale, classLoader, new UTF8Control());
+			ResourceBundle resourceBundle = ResourceBundleUtil.getUTF8ResourceBundleInOSGiEnvironment("i18n", locale);
 			message = resourceBundle.getString(messageId);
 		}
 		catch (MissingResourceException e) {
@@ -158,8 +158,7 @@ public class I18nImpl implements I18n, Serializable {
 				messageBundle = FacesMessage.FACES_MESSAGES;
 			}
 
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			facesResourceBundle = ResourceBundle.getBundle(messageBundle, locale, classLoader, new UTF8Control());
+			facesResourceBundle = ResourceBundleUtil.getUTF8ResourceBundleInOSGiEnvironment(messageBundle, locale);
 
 			if (facesResourceBundleCache != null) {
 				facesResourceBundle = facesResourceBundleCache.putValueIfAbsent(locale, facesResourceBundle);

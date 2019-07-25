@@ -33,6 +33,7 @@ import com.liferay.faces.util.config.FacesConfig;
 import com.liferay.faces.util.config.WebConfigParam;
 import com.liferay.faces.util.config.internal.ApplicationConfigInitializer;
 import com.liferay.faces.util.config.internal.ApplicationConfigInitializerImpl;
+import com.liferay.faces.util.el.internal.ELResolverNoOpImpl;
 import com.liferay.faces.util.el.internal.ELResolverWrapper;
 import com.liferay.faces.util.el.internal.I18nMap;
 import com.liferay.faces.util.factory.FactoryExtensionFinder;
@@ -110,7 +111,12 @@ public class ApplicationStartupListener extends ApplicationStartupListenerCompat
 			Map<String, Object> applicationMap = externalContext.getApplicationMap();
 			BeanManager beanManager = (BeanManager) applicationMap.get(OnDemandBeanManagerKey.INSTANCE);
 
-			return beanManager.getELResolver();
+			if (beanManager != null) {
+				return beanManager.getELResolver();
+			}
+			else {
+				return new ELResolverNoOpImpl();
+			}
 		}
 	}
 
