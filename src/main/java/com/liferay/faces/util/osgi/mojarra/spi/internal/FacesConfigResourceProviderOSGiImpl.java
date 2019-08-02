@@ -17,11 +17,16 @@ package com.liferay.faces.util.osgi.mojarra.spi.internal;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import com.liferay.faces.util.logging.Logger;
+import com.liferay.faces.util.logging.LoggerFactory;
 import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
 import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerResourceProviderOSGiImpl;
 import com.liferay.faces.util.resource.internal.ResourceProviderUtil;
@@ -36,6 +41,9 @@ import com.sun.faces.spi.FacesConfigResourceProvider;
  * @author  Kyle Stiemann
  */
 public class FacesConfigResourceProviderOSGiImpl implements FacesConfigResourceProvider {
+
+	// Logger
+	private static final Logger logger = LoggerFactory.getLogger(FacesConfigResourceProviderOSGiImpl.class);
 
 	/**
 	 * Returns the list of *.faces-config.xml resources (and *faces-config.xml resources if necessary) found in Faces
@@ -68,8 +76,14 @@ public class FacesConfigResourceProviderOSGiImpl implements FacesConfigResourceP
 					ResourceProviderUtil.FACES_CONFIG_EXTENSION_PATTERN);
 		}
 
-		List<URL> resourceURLs = facesBundlesHandler.handleFacesBundles(servletContext);
+		List<URL> resourceURLs = new ArrayList<URL>(facesBundlesHandler.handleFacesBundles(servletContext));
 
-		return ResourceProviderUtil.getResourcesAsURIs(resourceURLs);
+		if (FacesBundlesHandlerBase.isCurrentWarThinWab()) {
+
+			Iterator<URL> iterator = resourceURLs.iterator();
+			ConfigUtil.removeUnloadableConfigFiles(false, iterator, servletContext);
+		}
+
+		return ResourceProviderUtil.getResourcesAsURIs(Collections.unmodifiableList(resourceURLs));
 	}
 }

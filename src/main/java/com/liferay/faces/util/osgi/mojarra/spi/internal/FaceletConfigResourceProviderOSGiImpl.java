@@ -17,7 +17,10 @@ package com.liferay.faces.util.osgi.mojarra.spi.internal;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -48,8 +51,14 @@ public class FaceletConfigResourceProviderOSGiImpl implements ConfigurationResou
 
 		FacesBundlesHandlerBase<List<URL>> facesBundlesHandler = new FacesBundlesHandlerResourceProviderOSGiImpl(
 				ResourceProviderUtil.META_INF_PATH, "*.taglib.xml");
-		List<URL> resourceURLs = facesBundlesHandler.handleFacesBundles(servletContext);
+		List<URL> resourceURLs = new ArrayList<URL>(facesBundlesHandler.handleFacesBundles(servletContext));
 
-		return ResourceProviderUtil.getResourcesAsURIs(resourceURLs);
+		if (FacesBundlesHandlerBase.isCurrentWarThinWab()) {
+
+			Iterator<URL> iterator = resourceURLs.iterator();
+			ConfigUtil.removeUnloadableConfigFiles(false, iterator, servletContext);
+		}
+
+		return ResourceProviderUtil.getResourcesAsURIs(Collections.unmodifiableList(resourceURLs));
 	}
 }
