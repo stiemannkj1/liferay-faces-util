@@ -38,6 +38,7 @@ import com.liferay.faces.util.config.WebConfig;
 import com.liferay.faces.util.internal.CloseableUtil;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
+import com.liferay.faces.util.osgi.internal.FacesBundleUtil;
 import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerBase;
 import com.liferay.faces.util.osgi.internal.FacesBundlesHandlerResourceProviderOSGiImpl;
 import com.liferay.faces.util.product.internal.ProductMojarraImpl;
@@ -259,7 +260,7 @@ public class FacesConfigScannerImpl implements FacesConfigScanner {
 		List<URL> facesConfigURLs = new ArrayList<URL>();
 		FacesContext initFacesContext = FacesContext.getCurrentInstance();
 
-		if (FacesBundlesHandlerBase.isCurrentWarThinWab()) {
+		if (FacesBundleUtil.isCurrentWarThinWab()) {
 
 			FacesBundlesHandlerBase<List<URL>> facesBundlesHandler = new FacesBundlesHandlerFacesConfigScannerImpl(
 					ResourceProviderUtil.META_INF_PATH, ResourceProviderUtil.ALL_FACES_CONFIG_PATTERN);
